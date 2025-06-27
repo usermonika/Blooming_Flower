@@ -104,6 +104,7 @@ DATABASES = {
 }
 
 # Khalti keys
+<<<<<<< HEAD
 KHALTI_PUBLIC_KEY = os.getenv('KHALTI_PUBLIC_KEY')
 KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY')
 KHALTI_VERIFY_URL = os.getenv('KHALTI_VERIFY_URL')
@@ -111,6 +112,16 @@ KHALTI_VERIFY_URL = os.getenv('KHALTI_VERIFY_URL')
 # Stripe keys
 STRIPE_TEST_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
 STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
+=======
+KHALTI_PUBLIC_KEY = 'test_public_key_b99f68905c93498faa16347e2f94307c'
+KHALTI_SECRET_KEY = 'test_secret_key_4215d7bd7ba04a0d9d8ed75e68997a39'
+
+KHALTI_VERIFY_URL = 'https://khalti.com/api/v2/payment/verify/'
+
+# settings.py
+STRIPE_TEST_PUBLIC_KEY = ''
+STRIPE_TEST_SECRET_KEY = ''
+>>>>>>> 62825bc (first commit)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
