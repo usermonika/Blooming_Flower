@@ -1,0 +1,165 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+			<!-- HEADING-BANNER START -->
+			<div class="heading-banner-area overlay-bg">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="heading-banner">
+								<div class="heading-banner-title">
+									<h2>Blog</h2>
+								</div>
+								<div class="breadcumbs pb-15">
+									<ul>
+										<li><a href="index.html">Home</a></li>
+										<li>Blog</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- HEADING-BANNER END -->
+			<!-- BLGO-AREA START -->
+			<div class="blog-area blog-2  pt-80 pb-80">
+				<div class="container">	
+					<div class="blog">
+						<div class="row">
+							
+							<div class="col-md-12">
+								<div class="product-option mb-30 clearfix">
+									<!-- Categories start -->
+									<div class="dropdown floatleft">
+										<button class="option-btn active" data-bs-toggle="dropdown" >
+										Categories
+										</button>
+										<div class="dropdown-menu dropdown-width" >
+											<!-- Widget-Categories start -->
+											<aside class="widget widget-categories">
+												<div class="widget-title">
+													<h4>Categories</h4>
+												</div>
+												<div id="cat-treeview"  class="widget-info product-cat boxscrol2">
+													<ul>
+														<li><a href="{% url 'blog_list' %}">All</a></li>
+														{% for category in categories %}
+															<li>
+																<a href="{% url 'blog_list' %}?category={{ category.id }}">
+																	{{ category.name }}
+																</a>
+															</li>
+														{% endfor %}
+													</ul>
+												</div>
+											</aside>
+											<!-- Widget-categories end -->
+										</div>
+									</div>	
+									<!-- Categories end -->
+									
+								</div>						
+							</div>							
+						</div>
+						
+						<div class="row">
+  {% for blog in page_obj %}
+  <div class="col-lg-4 col-md-6">
+    <div class="single-blog mb-30">
+      <div class="blog-photo">
+        <a href="#"><img src="{{ blog.image.url }}" alt="{{ blog.title }}" style="width:320px;height:200px;object-fit:cover;" /></a>
+        <div class="like-share text-center fix">
+          {% if blog.id in user_liked_blog_ids %}
+            <a href="#" onclick="likeBlog({{ blog.id }})" id="like-btn-{{ blog.id }}">
+              <i class="zmdi zmdi-favorite liked"></i>
+              <span id="like-count-{{ blog.id }}">{{ blog.total_likes }}</span> Like
+            </a>
+          {% else %}
+            <a href="#" onclick="likeBlog({{ blog.id }})" id="like-btn-{{ blog.id }}">
+              <i class="zmdi zmdi-favorite-outline"></i>
+              <span id="like-count-{{ blog.id }}">{{ blog.total_likes }}</span> Like
+            </a>
+          {% endif %}
+          <a href="#"><i class="zmdi zmdi-comments"></i><span>{{ blog.comments.count }} Comments</span></a>
+          <a href="#"><i class="zmdi zmdi-share"></i><span>{{ blog.shares }} Share</span></a>
+        </div>
+      </div>
+
+      <div class="blog-info">
+        <div class="post-meta fix">
+          <div class="post-date floatleft">
+            <span class="text-dark-red">{{ blog.date_posted.day }}</span>
+          </div>
+          <div class="post-year floatleft">
+            <p class="text-uppercase text-dark-red mb-0">{{ blog.date_posted|date:"F, Y" }}</p>
+            <h4 class="post-title">
+              <a href="#">{{ blog.title }}</a>
+            </h4>
+          </div>
+        </div>
+        <p>{{ blog.content|truncatewords:30 }}</p>
+		<a href="{% url 'blog_detail' blog.id %}" class="button-2 text-dark-red">Read more...</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								<!-- Pagination start -->
+								<div class="shop-pagination text-center">
+								<div class="pagination">
+									<ul>
+										{% if page_obj.has_previous %}
+											<li><a href="?page={{ page_obj.previous_page_number }}"><i class="zmdi zmdi-long-arrow-left"></i></a></li>
+										{% endif %}
+
+										{% for num in page_obj.paginator.page_range %}
+											{% if page_obj.number == num %}
+												<li><a class="active" href="?page={{ num }}">{{ num }}</a></li>
+											{% else %}
+												<li><a href="?page={{ num }}">{{ num }}</a></li>
+											{% endif %}
+										{% endfor %}
+
+										{% if page_obj.has_next %}
+											<li><a href="?page={{ page_obj.next_page_number }}"><i class="zmdi zmdi-long-arrow-right"></i></a></li>
+										{% endif %}
+									</ul>
+								</div>
+							</div>
+
+								<!-- Pagination end -->							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- BLGO-AREA END -->
+			 <a href="#" onclick="likeBlog({{ blog.id }})" id="like-btn-{{ blog.id }}">
+    <i class="zmdi zmdi-favorite-outline"></i>
+    <span id="like-count-{{ blog.id }}">{{ blog.total_likes }}</span> Like
+</a>
+
+<script>
+function likeBlog(blogId) {
+    fetch(`/like-blog/${blogId}/`)
+        .then(response => response.json())
+        .then(data => {
+            const icon = document.querySelector(`#like-btn-${blogId} i`);
+            const count = document.querySelector(`#like-count-${blogId}`);
+
+            if (data.liked) {
+                icon.className = 'zmdi zmdi-favorite'; // liked
+            } else {
+                icon.className = 'zmdi zmdi-favorite-outline'; // unliked
+            }
+            count.textContent = data.total_likes;
+        });
+}
+</script>
+		
+			{% endblock %}

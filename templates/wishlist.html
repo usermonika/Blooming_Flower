@@ -1,0 +1,205 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+		
+			<!-- HEADING-BANNER START -->
+			<div class="heading-banner-area overlay-bg">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="heading-banner">
+								<div class="heading-banner-title">
+									<h2>Wishlist</h2>
+								</div>
+								<div class="breadcumbs pb-15">
+									<ul>
+										<li><a href="index.html">Home</a></li>
+										<li>Wishlist</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- HEADING-BANNER END -->
+			<!-- WISHLIST-AREA START -->
+			<div class="shopping-cart-area pt-80 pb-80">
+				<div class="container">	
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="shopping-cart">
+								<!-- Nav tabs -->
+								<ul class="cart-page-menu nav row clearfix mb-30">
+									<li><a class="active" href="#wishlist" data-bs-toggle="tab">wishlist</a></li>
+									</ul>
+
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<!-- shopping-cart start -->
+									<div class="tab-pane" id="shopping-cart">
+										<form action="{% url 'cart' %}" method='post'>
+											<div class="shop-cart-table">
+												<div class="table-content table-responsive">
+													<table>
+														<thead>
+															<tr>
+																<th class="product-thumbnail">Product</th>
+																<th class="product-price">Price</th>
+																<th class="product-quantity">Quantity</th>
+																<th class="product-subtotal">Total</th>
+																<th class="product-remove">Remove</th>
+															</tr>
+														</thead>
+														<tbody>
+															{% for item in cart_items %}
+
+															<tr>
+																<td class="product-thumbnail text-left">
+																		<div class="single-product">
+																			<div class="product-img">
+																				<a href="#"><img src="{{ item.product.image.url }}" alt="" /></a>
+																			</div>
+																			<div class="product-info">
+																				<h4 class="post-title"><a class="text-light-black" href="#">{{ item.product.name }}</a></h4>
+																				<p class="mb-0">Color : Black</p>
+																				<p class="mb-0">Size : SL</p>
+																			</div>
+																		</div>												
+																	</td>
+															<td class="product-price" data-price="{{ item.product.price }}">
+															Rs {{ item.product.price|floatformat:2 }}
+															</td>
+																<td class="product-quantity">
+																<div class="cart-plus-minus"> 
+																	<input type="number" value="{{ item.quantity }}" name="quantity_{{ item.id }}" class="cart-plus-minus-box" min="1" />
+															</div> 
+															</td> 
+
+															<td class="product-subtotal">
+															Rs <span class="subtotal-value">{{ item.product.price|floatformat:2 }}</span>
+															</td>
+
+														<td class="product-remove">
+														{% if item.id %}
+															<a href="{% url 'remove_from_cart' item.id %}">Remove</a>
+														{% else %}
+															<span class="text-muted">Login to remove</span>
+														{% endif %}
+														{% empty %}
+																<tr>
+																	<td colspan="5" class="text-center">Your cart is empty.</td>
+																</tr>
+																{% endfor %}
+															</tr>
+															</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="row">
+												
+												<div class="col-md-6">
+													<div class="customer-login payment-details mt-30">
+														<h4 class="title-1 title-border text-uppercase">payment details</h4>
+														<table>
+															<tbody>
+																<tr>
+																	<td class="text-left">Cart Subtotal</td>
+																	<td class="text-end">Rs {{ subtotal }}</td>
+																</tr>
+																<tr>
+																	<td class="text-left">Shipping</td>
+																	<td class="text-end">Rs {{ shipping }}</td>
+																</tr>
+																<tr>
+																	<td class="text-left">Vat</td>
+																	<td class="text-end">Rs {{ vat }}</td>
+																</tr>
+																<tr>
+																	<td class="text-left">Order Total</td>
+																	<td class="text-end">Rs{{ total }}</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+											
+										</form>		
+									</div>
+									<!-- shopping-cart end -->
+									<!-- wishlist start -->
+									<div class="tab-pane active" id="wishlist">
+										<form action="#">
+											<div class="shop-cart-table">
+												<div class="table-content table-responsive">
+													<table>
+														<thead>
+															<tr>
+																<th class="product-id">ID</th>
+																<th class="product-thumbnail">Image</th>
+																<th class="product-price">Price</th>
+																<th class="product-stock">Stock Status</th>
+																<th class="product-add-cart">Add to Cart</th>
+																<th class="product-remove">Remove</th>
+															</tr>
+														</thead>
+														<tbody>
+															{% if products %}
+																{% for product in products %}
+																	<tr>
+																		<td class="product-id">{{ forloop.counter }}</td>
+																		<td>
+																			<img src="{{ product.image.url }}" style="width: 70px; height: 70px; object-fit: cover;">
+																		</td>
+																		<td class="product-price">${{ product.price|floatformat:2 }}</td>
+																		<td class="product-stock">
+																			{% if product.stock > 0 %}
+																				In Stock
+																			{% else %}
+																				Out of Stock
+																			{% endif %}
+																		</td>
+																		<td class="product-add-cart">
+																			<a class="text-light-black" href="{% url 'add_to_cart' product.id %}">
+																				<i class="zmdi zmdi-shopping-cart-plus"></i>
+																			</a>
+																		</td>
+																		<td class="product-remove">
+																			{% if user.is_authenticated %}
+																				<a href="{% url 'remove_from_wishlist' product.id %}" title="Remove from wishlist">
+																					<i class="zmdi zmdi-close"></i>
+																				</a>
+																			{% else %}
+																				<a href="{% url 'login' %}" title="Login to remove item from wishlist">
+																					<i class="zmdi zmdi-lock-outline"></i> Login to remove
+																				</a>
+																			{% endif %}
+																		</td>
+																	</tr>
+																{% endfor %}
+															{% else %}
+																<tr>
+																	<td colspan="6" class="text-center">Your wishlist is empty.</td>
+																</tr>
+															{% endif %}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</form>									
+									</div>
+									<!-- wishlist end -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- WISHLIST-AREA END -->
+			{% endblock %}
+
+			

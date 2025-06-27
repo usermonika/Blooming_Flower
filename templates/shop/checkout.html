@@ -1,0 +1,251 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- HEADING-BANNER START -->
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>Check Out</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+									<ul>
+										<li><a href="index.html">Home</a></li>
+										<li>Checkout</li>
+									</ul>
+								</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- HEADING-BANNER END -->
+
+<!-- CHECKOUT-AREA START -->
+<div class="shopping-cart-area pt-80 pb-80">
+    <div class="container">    
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shopping-cart">
+                    <!-- Nav tabs -->
+                    <ul class="cart-page-menu nav row clearfix mb-30">
+                        <li><a href="{% url 'wishlist' %}" data-bs-toggle="tab">Wishlist</a></li>
+                        <li><a class="active" href="#check-out" data-bs-toggle="tab">Check Out</a></li>
+                    </ul>                            
+
+                    <!-- order-complete start -->
+                    <div class="tab-pane" id="check-out">
+                        <form method="post" action="{% url 'checkout' %}" id="payment-form">
+                            {% csrf_token %}
+                            <div class="shop-cart-table check-out-wrap">
+                                <div class="row">
+                                    <!-- Billing Details -->
+                                    <div class="col-md-6">
+                                        <div class="billing-details pr-20">
+                                            <h4 class="title-1 title-border text-uppercase mb-30">Billing Details</h4>
+                                            <input type="text" name="full_name" placeholder="Your name here..." required>
+                                            <input type="text" name="email" placeholder="Email address here..." required>
+                                            <input type="text" name="phone" placeholder="Phone here..." required>
+                                            <input type="text" name="address" placeholder="Address here..." required>
+                                            <select name="country" class="custom-select mb-15" required>
+                                                <option value="">Country</option>
+                                                <option>Nepal</option>
+                                                <option>United States</option>
+                                                <option>United Kingdom</option>
+                                            </select>
+                                            <select name="state" class="custom-select mb-15" required>
+                                                <option value="">State</option>
+                                                <option>Gandaki</option>
+                                                <option>Bagmati</option>
+                                                <option>Chitwan</option>
+                                            </select>
+                                            <input type="text" name="city" placeholder="Town / City here..." required>
+                                             <label>
+    <input type="radio" name="payment_method" value="stripe" checked> Pay with Stripe
+  </label>
+  <label>
+    <input type="radio" name="payment_method" value="khalti"> Pay with Khalti
+  </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Order Summary -->
+                                    <div class="col-md-6">
+                                        <div class="our-order payment-details mt-60 pr-20">
+                                            <h4 class="title-1 title-border text-uppercase mb-30">Your Order</h4>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th class="text-end">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for item in cart_items %}
+                                                    <tr>
+                                                        <td>{{ item.product.name }} x {{ item.quantity }}</td>
+                                                        <td class="text-end">${{ item.product.price|floatformat:2 }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    <tr>
+                                                        <td>Subtotal</td>
+                                                        <td class="text-end">${{ subtotal }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Shipping</td>
+                                                        <td class="text-end">${{ shipping }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>VAT</td>
+                                                        <td class="text-end">${{ vat }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Total</strong></td>
+                                                        <td class="text-end"><strong>${{ total }}</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+<!-- ... existing billing/order form ... -->
+
+<!-- Hidden input to hold amount for Khalti -->
+<input type="hidden" id="order-amount" value="{{ total|floatformat:0 }}">
+
+<!-- Payment Method (Stripe + Khalti) -->
+<div class="col-md-6">
+    <div class="payment-method mt-60 pl-20">
+        <h4 class="title-1 title-border text-uppercase mb-30">Payment Method</h4>
+        <div class="payment-accordion">
+            <h3 class="payment-accordion-toggle active">Pay with Stripe</h3>
+            <div class="payment-content default">
+                <p>Enter your card details for Stripe</p>
+                <div id="card-element"></div> <!-- Stripe card element -->
+                <div id="card-errors" role="alert"></div>
+                {% comment %} <button type="submit">Pay with Stripe</button> {% endcomment %}
+                {% comment %} <button id="khalti-payment-button" type="button">Pay with Khalti</button> {% endcomment %}
+            </div>
+        </div>
+    </div>
+</div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Load Khalti Checkout JS once -->
+<script src="https://a.khalti.com/static/khalti-checkout.js"></script>
+
+<script>
+  // Khalti checkout configuration
+  var config = {
+    publicKey: "{{ public_khalti_key }}", // from Django context
+    productIdentity: "{{ order.id|default:'order123' }}",
+    productName: "Peace Zone Order",
+    productUrl: "http://yourdomain.com/checkout",
+    paymentPreference: ["KHALTI"],
+
+    eventHandler: {
+      onSuccess(payload) {
+        // Send payment verification request to backend
+        fetch("{% url 'verify_khalti_payment' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+            token: payload.token,
+            amount: parseInt(document.getElementById("order-amount").value) * 100
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert("✅ Payment Successful!");
+            window.location.href = `/checkout?order_id=${data.order_id}`;
+          } else {
+            alert("❌ Payment Failed: " + data.message);
+          }
+        })
+        .catch(err => {
+          alert("❌ Something went wrong: " + err.message);
+        });
+      },
+
+      onError(error) {
+        alert("❌ Payment Error: " + JSON.stringify(error));
+      },
+
+      onClose() {
+        console.log("🛑 Khalti Widget closed");
+      }
+    }
+  };
+
+  var checkout = new KhaltiCheckout(config);
+
+  document.getElementById("khalti-payment-button").onclick = function () {
+    let amount = parseInt(document.getElementById("order-amount").value);
+    if (!isNaN(amount) && amount > 0) {
+      // amount * 100 because Khalti accepts amount in paisa
+      checkout.show({ amount: amount * 100 });
+    } else {
+      alert("⚠️ Invalid amount.");
+    }
+  };
+</script>
+
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe("{{ public_key }}");  // Use your test/public key from settings
+    const elements = stripe.elements();
+
+    const card = elements.create("card");
+    card.mount("#card-element");
+
+    card.on("change", function(event) {
+        const displayError = document.getElementById("card-errors");
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = "";
+        }
+    });
+
+    const form = document.getElementById("payment-form");
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                // Inform the user if there was an error.
+                const errorElement = document.getElementById("card-errors");
+                errorElement.textContent = result.error.message;
+            } else {
+                // Send the token to your server
+                const hiddenInput = document.createElement("input");
+                hiddenInput.setAttribute("type", "hidden");
+                hiddenInput.setAttribute("name", "stripeToken");
+                hiddenInput.setAttribute("value", result.token.id);
+                form.appendChild(hiddenInput);
+
+                // Submit the form
+                form.submit();
+                {% comment %} alert("Successfully transaction Complete");
+                alert(token); {% endcomment %}
+            }
+        });
+    });
+</script>
+
+{% endblock %} 

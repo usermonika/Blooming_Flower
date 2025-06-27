@@ -1,0 +1,58 @@
+<!-- templates/payment.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khalti Payment</title>
+    <script src="https://khalti.com/static/khalti-checkout.js"></script>
+</head>
+<body>
+    <h1>Pay with Khalti</h1>
+    <form id="payment-form">
+        <input type="number" id="amount" placeholder="Amount (in paisa)" required>
+        <button type="button" id="pay-button">Pay with Khalti</button>
+    </form>
+
+    <script>
+        var checkout = new KhaltiCheckout({
+            publicKey: "{{ KHALTI_PUBLIC_KEY }}",  // Use Django template syntax to insert your public key
+            productIdentity: "1234567890",  // Unique product ID
+            productName: "Test Product",
+            productUrl: "http://localhost:8000/",
+            eventHandler: {
+                onSuccess: function (payload) {
+                    // Send payload to your server
+                    const amount = document.getElementById('amount').value;
+                    fetch('/initiate-payment/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',  // CSRF token for security
+                        },
+                        body: JSON.stringify({ token: payload.token, amount: amount }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        alert('Payment successful!');
+                    });
+                },
+                onError: function (error) {
+                    console.error(error);
+                    alert('Payment failed!');
+                },
+                onClose: function () {
+                    console.log('Widget is closed');
+                }
+            }
+        });
+
+        document.getElementById('pay-button').onclick = function () {
+            const amount = document.getElementById('amount').value;
+            checkout.show({ amount: amount });  // Show Khalti checkout widget
+        };
+    </script>
+</body>
+</html>

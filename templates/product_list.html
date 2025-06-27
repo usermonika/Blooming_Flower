@@ -1,0 +1,247 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+			<!-- HEADING-BANNER START -->
+			<div class="heading-banner-area overlay-bg">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="heading-banner">
+								<div class="heading-banner-title">
+									<h2>Product List View</h2>
+								</div>
+								<div class="breadcumbs pb-15">
+									<ul>
+										<li><a href="#">Home</a></li>
+										<li>Product list view</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- HEADING-BANNER END -->
+			<!-- PRODUCT-AREA START -->
+			<div class="product-area pt-80 pb-80 product-style-2">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 order-2">
+							<!-- Widget-Search start -->
+							<aside class="widget widget-search mb-30">
+								<form action="#">
+									<input type="text" placeholder="Search here..." />
+									<button type="submit">
+										<i class="zmdi zmdi-search"></i>
+									</button>
+								</form>
+							</aside>
+							<!-- Widget-search end -->
+							<!-- Widget-Categories start -->
+							<aside class="widget widget-categories  mb-30">
+								<div class="widget-title">
+									<h4>Categories</h4>
+								</div>
+								<div id="cat-treeview"  class="widget-info product-cat boxscrol2">
+									<ul>
+										{% for category in categories %}
+										<li><span><a href="?category={{ category.id }}">{{ category.name }}</a></span>
+											
+										</li>          
+										{% empty %}
+											<li>No categories found.</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</aside>
+							<!-- Widget-categories end -->
+							{% comment %} <!-- Shop-Filter start -->
+							<aside class="widget shop-filter mb-30">
+								<div class="widget-title">
+									<h4>Price</h4>
+								</div>
+								<div class="widget-info">
+									<div class="price_filter">
+										<div class="price_slider_amount">
+											<input type="submit"  value="You range :"/> 
+											<input type="text" id="amount" name="price"  placeholder="Add Your Price" /> 
+										</div>
+										<div id="slider-range"></div>
+									</div>
+								</div>
+							</aside> {% endcomment %}
+							<!-- Shop-Filter end -->
+							<!-- Widget-Color start -->
+							<aside class="widget widget-color mb-30">
+								<div class="widget-title">
+									<h4>Color</h4>
+								</div>
+								<div class="widget-info color-filter clearfix">
+									<ul>
+										{% for color in colors %}
+											<li><a href="?color={{ color.id }}">{{ color.name }}</a></li>
+										{% empty %}
+											<li>No colors found.</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</aside>
+							<!-- Widget-Color end -->
+							
+							
+						</div>
+						<div class="col-lg-9 order-1">
+							<!-- Shop-Content End -->
+							<div class="shop-content mt-tab-30 mb-30 mb-lg-0">
+								<div class="product-option mb-30 clearfix">
+									<!-- Nav tabs -->
+									<ul class="nav d-block shop-tab">
+										<li><a href="#grid-view" data-bs-toggle="tab"><i class="zmdi zmdi-view-module"></i></a></li>
+										<li><a class="active" href="#list-view"  data-bs-toggle="tab"><i class="zmdi zmdi-view-list"></i></a></li>
+									</ul>
+									<div class="showing text-end d-none d-md-block">
+										<p class="mb-0">Showing 01-09 of 17 Results</p>
+									</div>
+								</div>
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<div class="tab-pane" id="grid-view">							
+										<div class="row">
+											{% for product in products %}
+											<div class="col-lg-4 col-md-6">
+												<div class="single-product">
+													<div class="product-img">
+														{% if product.label %}
+														<span class="pro-label {{ product.label }}-label">{{ product.label|title }}</span>
+														{% endif %}
+														<span class="pro-price-2">${{ product.price }}</span>
+														<a href="{% url 'product_detail' product.id %}">
+															{% if product.image %}
+														<img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:270px; height:270px; object-fit:cover;" />
+															{% else %}
+																<img src="{% static 'images/no-image.png' %}" alt="No Image" style="width:270px; height:270px; object-fit:cover;" />
+															{% endif %}
+														</a>
+													</div>
+													<div class="product-info clearfix text-center">
+														<div class="fix">
+															<h4 class="post-title"><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h4>
+														</div>
+														<div class="fix">
+															<span class="pro-rating">
+																<!-- Example: Display 5 stars based on rating -->
+																{% for i in "12345" %}
+																	{% if product.avg_rating|default:0 >= i|add:"0" %}
+																		<i class="zmdi zmdi-star"></i>
+																	{% elif product.avg_rating|default:0 >= i|add:"-0.5" %}
+																		<i class="zmdi zmdi-star-half"></i>
+																	{% else %}
+																		<i class="zmdi zmdi-star-outline"></i>
+																	{% endif %}
+																{% endfor %}
+															</span>
+														</div>
+														<div class="product-action clearfix">
+															<a href="{% url 'add_to_wishlist' product_id=product.id %}" data-bs-toggle="tooltip" data-placement="top" title="Wishlist"><i class="zmdi zmdi-favorite-outline"></i></a>
+															<a href="{% url 'product_quickview' id=product.id %}" data-bs-toggle="modal" data-bs-target="#productModal" title="Quick View"><i class="zmdi zmdi-zoom-in"></i></a>
+															<a href="{% url 'add_to_cart' product.id %}" data-bs-toggle="tooltip" data-placement="top" title="Add To Cart"><i class="zmdi zmdi-shopping-cart-plus"></i></a>
+														</div>
+													</div>
+												</div>
+											</div>
+											{% empty %}
+											<p>No products available.</p>
+											{% endfor %}
+										</div>
+									</div>
+									<div class="tab-pane active" id="list-view">
+									<div class="row shop-list">
+										{% for product in products %}
+										<div class="col-lg-12">
+											<div class="single-product clearfix">
+												<div class="product-img">
+													{% if product.label %}
+													<span class="pro-label {{ product.label }}-label">{{ product.label|title }}</span>
+													{% endif %}
+													<span class="pro-price-2">${{ product.price }}</span>
+													<a href="{% url 'product_detail' product.id %}">
+														{% if product.image %}
+															<img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:270px; height:270px; object-fit:cover;" />
+														{% else %}
+															<img src="{% static 'images/no-image.png' %}" alt="No Image" style="width:270px; height:270px; object-fit:cover;" />
+														{% endif %}
+													</a>
+												</div>
+												<div class="product-info">
+													<div class="fix">
+														<h4 class="post-title floatleft">
+															<a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+														</h4>
+														<span class="pro-rating floatright">
+															{% for i in "12345" %}
+																{% if product.avg_rating|default:0 >= i|add:"0" %}
+																	<i class="zmdi zmdi-star"></i>
+																{% elif product.avg_rating|default:0 >= i|add:"-0.5" %}
+																	<i class="zmdi zmdi-star-half"></i>
+																{% else %}
+																	<i class="zmdi zmdi-star-outline"></i>
+																{% endif %}
+															{% endfor %}
+															<span>({{ product.review_count }} Rating)</span>
+														</span>
+													</div>
+													<div class="fix mb-20">
+														<span class="pro-price">${{ product.price }}</span>
+														{% if product.old_price %}
+														<span class="old-price font-16px ml-10"><del>${{ product.old_price }}</del></span>
+														{% endif %}
+													</div>
+													<div class="product-description">
+														<p>{{ product.description|truncatechars:220 }}</p>
+													</div>
+													<div class="clearfix">
+														<div class="cart-plus-minus">
+															<input type="text" value="1" name="qtybutton" class="cart-plus-minus-box">
+														</div>
+														<div class="product-action clearfix">
+															<a href="{% url 'add_to_wishlist' product_id=product.id %}" data-bs-toggle="tooltip" title="Wishlist"><i class="zmdi zmdi-favorite-outline"></i></a>
+															<a href="{% url 'product_quickview' id=product.id%}" data-bs-toggle="modal" data-bs-target="#productModal" title="Quick View"><i class="zmdi zmdi-zoom-in"></i></a>
+															<a href="{% url 'add_to_cart' product.id %}" data-bs-toggle="tooltip" title="Add To Cart"><i class="zmdi zmdi-shopping-cart-plus"></i></a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										{% empty %}
+										<p class="text-center">No products available.</p>
+										{% endfor %}
+									</div>
+								</div>
+
+											
+								</div>
+								<!-- Pagination start -->
+								<div class="shop-pagination  text-center">
+									<div class="pagination">
+										<ul>
+											<li><a href="#"><i class="zmdi zmdi-long-arrow-left"></i></a></li>
+											<li><a href="#">01</a></li>
+											<li><a class="active" href="#">02</a></li>
+											<li><a href="#">03</a></li>
+											<li><a href="#">04</a></li>
+											<li><a href="#">05</a></li>
+											<li><a href="#"><i class="zmdi zmdi-long-arrow-right"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<!-- Pagination end -->
+							</div>
+							<!-- Shop-Content End -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- PRODUCT-AREA END -->
+			{% endblock %}

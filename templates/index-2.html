@@ -1,0 +1,401 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+			<!-- SLIDER-AREA START  -->
+			<section class="slider-area slider-style-2">
+				<div class="bend niceties preview-2">
+					<div id="ensign-nivoslider" class="slides">	
+						<img src="{% static 'images/whiteflower.jpg' %}" alt="" title="#slider-direction-1" style=" object-fit:cover;" />
+						<img src="{% static 'images/pinkflower.jpg' %}" alt="" title="#slider-direction-2" style=" object-fit:cover;" />
+						<img src="{% static 'images/spring.jpg' %}" alt="" title="#slider-direction-3" style=" object-fit:cover;" />
+					</div>
+					<!-- direction 1 -->
+					<div id="slider-direction-1" class="t-cn slider-direction">
+						<div class="slider-progress"></div>
+						<div class="slider-content t-lfl s-tb slider-1">
+							<div class="title-container s-tb-c title-compress">
+								<div class="layer-1">
+									<div class="wow fadeInUpBig" data-wow-duration="2s" data-wow-delay="0.5s">
+										<h3 class="slider-title3 text-uppercase mb-0" >welcome to our</h3>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="2.5s" data-wow-delay="0.5s">
+										<h2 class="slider-title1 text-uppercase mb-0"><span class="d-none d-md-block">elegent </span>  Blooming Flower</h2>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="3s" data-wow-delay="0.5s">
+										<h2 class="slider-title2 text-uppercase" >gallery 2025</h2>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="3.5s" data-wow-delay="0.5s">
+										<a href="#" class="button-one style-2 text-uppercase mt-20" data-text="Shop now">Shop now</a>
+									</div>
+								</div>
+							</div>
+						</div>	
+					</div>
+					<!-- direction 2 -->
+					<div id="slider-direction-2" class="slider-direction">
+						<div class="slider-progress"></div>
+						<div class="slider-content t-lfl s-tb slider-1">
+							<div class="title-container s-tb-c title-compress">
+								<div class="layer-1">
+									<div class="wow fadeInUpBig" data-wow-duration="1s" data-wow-delay="0.5s">
+										<h3 class="slider-title3 text-uppercase mb-0" >welcome to our</h3>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="1.5s" data-wow-delay="0.5s">
+										<h2 class="slider-title1 text-uppercase"><span class="d-none d-md-block">elegent </span> Blooming Flower</h2>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="2s" data-wow-delay="0.5s">
+										<p class="slider-pro-brief">Blooming Flower is a beautifully crafted ecommerce platform that offers a wide range of artificial and natural flower bouquets for all occasions. Whether you're looking to gift someone special, decorate your home, or celebrate events like birthdays, anniversaries, or weddings — we bring elegance and freshness to your doorstep.</p>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="2.5s" data-wow-delay="0.5s">
+										<a href="#" class="button-one style-2 text-uppercase mt-20" data-text="Shop now">Shop now</a>
+									</div>
+								</div>
+							</div>
+						</div>		
+					</div>
+					<!-- direction 3 -->
+					<div id="slider-direction-3" class="slider-direction">
+						<div class="slider-progress"></div>
+						<div class="slider-content t-lfl s-tb slider-1">
+							<div class="title-container s-tb-c title-compress">
+								<div class="layer-1">
+									<div class="wow fadeInUpBig" data-wow-duration="1s" data-wow-delay="0.5s">
+										<h3 class="slider-title3 text-uppercase mb-0" >welcome to our</h3>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="1.5s" data-wow-delay="0.5s">
+										<h2 class="slider-title1 text-uppercase mb-0"><span class="d-none d-md-block">elegent </span> Blooming Flower</h2>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="2s" data-wow-delay="0.5s">
+										<h2 class="slider-title2 text-uppercase" >Shop 2025</h2>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="2.5s" data-wow-delay="0.5s">
+										<p class="slider-pro-brief">Blooming Flower is a beautifully crafted  platform that offers a wide range of artificial and natural flower bouquets for all occasions. Whether you're looking to gift someone special, decorate your home, or celebrate events like birthdays, anniversaries, or weddings — we bring elegance and freshness to your doorstep.</p>
+									</div>
+									<div class="wow fadeInUpBig" data-wow-duration="3s" data-wow-delay="0.5s">
+										<a href="#" class="button-one style-2 text-uppercase mt-20" data-text="Shop now">Shop now</a>
+									</div>
+								</div>
+							</div>
+						</div>		
+					</div>
+				</div>
+			</section>
+			<!-- SLIDER-AREA END -->
+
+		<!-- PRODUCT-AREA START -->
+			<div class="product-area pt-80 pb-30 product-style-2">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="section-title text-center">
+								<h2 class="title-border">Featured Products</h2>
+							</div>
+							<div class="product-slider style-2 arrow-left-right">
+							{% for product in featured_products %}
+							<div class="col-12">
+								<div class="single-product">
+									<div class="product-img">
+										{% if product.label %}
+											<span class="pro-label {{ product.label }}-label">{{ product.label|title }}</span>
+										{% endif %}
+										<span class="pro-price-2">Rs {{ product.price }}</span>
+										<a href="#">
+											<img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:270px; height:270px; object-fit:cover;"  />
+										</a>
+									</div>
+									<div class="product-info clearfix text-center">
+										<div class="fix">
+											<h4 class="post-title"><a href="#">{{ product.name }}</a></h4>
+										</div>
+										<div class="fix">
+											<span class="pro-rating">
+												{% for i in "12345" %}
+													{% if forloop.counter <= product.avg_rating %}
+														<i class="zmdi zmdi-star"></i>
+													{% elif forloop.counter == product.avg_rating|floatformat:0 and product.avg_rating|floatformat:1|slice:"-1" == '5' %}
+														<i class="zmdi zmdi-star-half"></i>
+													{% else %}
+														<i class="zmdi zmdi-star-outline"></i>
+													{% endif %}
+												{% endfor %}
+											</span>
+										</div>
+										<div class="product-action clearfix">
+													<a href="{% url 'add_to_wishlist' product_id=product.id %}" class="wishlist-toggle" data-product-id="{{ product.id }}" title="Wishlist">
+														<i class="zmdi zmdi-favorite-outline"></i>
+														</a>										<a href="{% url 'product_quickview' id=product.id %}" title="Quick View">
+										<i class="zmdi zmdi-zoom-in"></i>
+										</a>	
+										<a href="{% url 'add_to_cart' product.id %}" title="Add To Cart" data-add-to-cart><i class="zmdi zmdi-shopping-cart-plus"></i></a>
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- PRODUCT-AREA END -->
+			<!-- DISCOUNT-PRODUCT START -->
+			<div class="discount-product-area discount-2">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-8 col-md-8">
+							<div class="row">
+								<div class="discount-product-slider dots-bottom-right">
+									<!-- single-discount-product start -->
+									{% for offer in discounts %}
+									<div class="col-lg-12">
+										<div class="discount-product">
+											<div class="row">
+												<div class="col-lg-5 col-md-5 col-sm-6">
+													<a href="#">
+														<img src="{{ offer.product.image.url }}" alt="{{ offer.product.name }}" style="width:340px;height:294px;object-fit:cover;" />
+													</a>
+												</div>
+												<div class="col-lg-7 col-md-7 col-sm-6">
+													<div class="discount-info"> 
+														<h1 class="text-dark-red">Discount {{ offer.discount_percent }}%</h1>
+														<p>{{ offer.description|truncatewords:25 }}</p>
+														<a class="button-2 text-dark-red text-uppercase" href="#">
+															GET DISCOUNT <i class="zmdi zmdi-long-arrow-right"></i>
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									{% endfor %}
+
+									<!-- single-discount-product end -->
+								</div>
+							</div>
+						</div>
+						
+						<!-- up-comming-product start -->
+						<div class="col-lg-4 col-md-4">
+							{% if upcoming_product %}
+							<div class="up-comming-product">
+								<div class="up-comming-img">
+									<a href="#"><img src="{{ upcoming_product.image.url }}" alt="Upcoming Product" style="width:330px;height:200px;object-fit:cover;"/></a>
+								</div>
+								<div class="up-comming-info text-center">
+									<div class="up-comming-brief">
+										<h4 class="post-title"><a href="#">{{ upcoming_product.product.name }}</a></h4>
+										<h4 class="comming-pro-price">Rs {{ upcoming_product.product.price }}</h4>
+									</div>
+									<div class="count-down">
+										<div data-countdown="{{ upcoming_product.release_date }}"></div>
+									</div>
+								</div>
+							</div>
+							{% else %}
+							<p class="text-center">No upcoming products available.</p>
+							{% endif %}
+						</div>
+						<!-- up-comming-product end -->
+
+					</div>
+				</div>
+			</div>
+			<script>
+				$('[data-countdown]').each(function () {
+					var $this = $(this), finalDate = $(this).data('countdown');
+					$this.countdown(finalDate, function (event) {
+						$this.html(event.strftime('%D days %H:%M:%S'));
+					});
+				});
+
+			</script>
+			<!-- DISCOUNT-PRODUCT END -->
+			<!-- PURCHASE-ONLINE-AREA START -->
+			<div class="purchase-online-area pt-80 product-style-2">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="section-title text-center">
+								<h2 class="title-border">Purchase Available Bouquets</h2>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12  text-center">
+							<!-- Nav tabs -->
+							<ul class="tab-menu nav clearfix">
+								<li><a class="active" href="#new-arrivals" data-bs-toggle="tab">New Arrivals</a></li>
+								<li><a href="#best-seller"  data-bs-toggle="tab">Best Seller </a></li>
+								<li><a href="#most-view" data-bs-toggle="tab">Most View </a></li>
+								<li><a href="#discounts" data-bs-toggle="tab">Discounts</a></li>
+							</ul>
+						</div>	
+						<div class="col-lg-12">
+							<!-- Tab panes -->
+							<div class="tab-content">
+								<div class="tab-pane active" id="new-arrivals">
+									<div class="row">
+										<!-- product_list.html -->
+										{% for product in products %}
+										<div class="col-xl-3 col-lg-4 col-md-6">
+											<div class="single-product">
+												<div class="product-img">
+													{% if product.label %}
+													<span class="pro-label {{ product.label }}-label">{{ product.label }}</span>
+													{% endif %}
+													<span class="pro-price-2">Rs {{ product.price }}</span>
+													{% if product.image %}
+														<img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:270px; height:270px; object-fit:cover;" />
+													{% else %}
+														<img src="{% static 'images/no-image.png' %}" alt="No Image" style="width:270px; height:270px; object-fit:cover;" />
+													{% endif %}
+
+												</div>
+												<div class="product-info clearfix text-center">
+													<div class="fix">
+														<h4 class="post-title"><a href="#">{{ product.name }}</a></h4>
+													</div>
+													<div class="fix">
+														<span class="pro-rating">
+															{% for i in "12345" %}
+																{% if forloop.counter <= product.avg_rating %}
+																	<i class="zmdi zmdi-star"></i>
+																{% elif product.avg_rating|floatformat:1 == forloop.counter0|add:0.5 %}
+																	<i class="zmdi zmdi-star-half"></i>
+																{% else %}
+																	<i class="zmdi zmdi-star-outline"></i>
+																{% endif %}
+															{% endfor %}
+														</span>
+													</div>
+													<div class="product-action clearfix">
+														<a href="{% url 'add_to_wishlist' product_id=product.id %}" class="wishlist-toggle" data-product-id="{{ product.id }}" title="Wishlist">
+														<i class="zmdi zmdi-favorite-outline"></i>
+														</a>
+														<a href="{% url 'product_quickview' id=product.id %}" title="Quick View">
+														<i class="zmdi zmdi-zoom-in"></i>
+														</a>
+														<a href="{% url 'add_to_cart' product.id %}" title="Add To Cart" data-add-to-cart><i class="zmdi zmdi-shopping-cart-plus"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+										{% endfor %}
+																
+									</div>					
+								</div>
+							</div>
+						</div>			
+					</div>
+				</div>
+			</div>
+			<!-- PURCHASE-ONLINE-AREA END -->
+			<!-- BLOG-AREA START -->
+<div class="blog-area blog-2 pt-50">
+    <div class="container">
+        <!-- Section-title start -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title text-center">
+                    <h2 class="title-border">From The Blog</h2>
+                </div>
+            </div>
+        </div>
+        <!-- Section-title end -->
+        <div class="row">
+            {% for blog in blogs %}
+            <div class="col-lg-4 col-md-6">
+                <div class="single-blog mt-30">
+                    <div class="blog-photo">
+                        <a href="#"><img src="{{ blog.image.url }}" alt="{{ blog.title }}" style="width:320px;height:200px;object-fit:cover;" /></a>
+                        <div class="like-share text-center fix">
+                            <a href="#"><i class="zmdi zmdi-favorite"></i><span>{{ blog.likes }} Like</span></a>
+                            <a href="#"><i class="zmdi zmdi-comments"></i><span>{{ blog.comments }} Comments</span></a>
+                            <a href="#"><i class="zmdi zmdi-share"></i><span>{{ blog.shares }} Share</span></a>
+                        </div>
+                    </div>
+                    <div class="blog-info">
+                        <div class="post-meta fix">
+                            <div class="post-date floatleft">
+                                <span class="text-dark-red">{{ blog.date_posted.day }}</span>
+                            </div>
+                            <div class="post-year floatleft">
+                                <p class="text-uppercase text-dark-red mb-0">{{ blog.date_posted|date:"F, Y" }}</p>
+                                <h4 class="post-title"><a href="#">{{ blog.title }}</a></h4>
+                            </div>
+                        </div>
+                        <p>{{ blog.content|truncatewords:20 }}</p>
+						<a href="{% url 'blog_detail' blog.id %}" class="button-2 text-dark-red">Read more...</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- BLOG-AREA END -->
+
+			<!-- BLGO-AREA END -->
+			{% comment %} <!-- BRAND-LOGO-AREA START -->
+			<div class="brand-logo-area pt-80">
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<div class="brand">
+								<div class="brand-slider">
+									<div class="single-brand">
+										<a href="https://themeforest.net/user/bootexperts/portfolio" target="_blank"><img src="{% static 'img/brand/1.png' %}" alt="" /></a>
+									</div>
+									<div class="single-brand">
+										<a href="https://themeforest.net/user/codecarnival/portfolio" target="_blank"><img src="{% static 'img/brand/2.png' %}" alt="" /></a>
+									</div>
+									<div class="single-brand">
+										<a href="https://themeforest.net/user/devitems/portfolio" target="_blank"><img src="{% static 'img/brand/3.png' %}" alt="" /></a>
+									</div>
+									<div class="single-brand">
+										<a href="https://themeforest.net/user/hastech/portfolio" target="_blank"><img src="{% static 'img/brand/4.png' %}" alt="" /></a>
+									</div>
+									<div class="single-brand">
+										<a href="https://psdrightsell.com/" target="_blank"><img src="{% static 'img/brand/5.png' %}" alt="" /></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- BRAND-LOGO-AREA END --> {% endcomment %}
+			
+<script>
+document.querySelectorAll('.wishlist-toggle').forEach(el => {
+  el.addEventListener('click', function(e) {
+    e.preventDefault();
+    const icon = this.querySelector('i');
+    const productId = this.dataset.productId;
+
+    fetch(`/add-to-wishlist/${productId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'added') {
+        icon.classList.remove('zmdi-favorite-outline');
+        icon.classList.add('zmdi-favorite');
+        icon.style.color = 'red';
+      } else if (data.status === 'removed') {
+        icon.classList.remove('zmdi-favorite');
+        icon.classList.add('zmdi-favorite-outline');
+        icon.style.color = '';
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+});
+</script>
+
+{% endblock %}

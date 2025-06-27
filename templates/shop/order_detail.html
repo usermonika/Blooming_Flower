@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<!-- HEADING-BANNER START -->
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>Order Detail</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <ul>
+                            <li><a href="{% url 'home' %}">Home</a></li>
+                            <li>Order Detail</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- HEADING-BANNER END -->
+
+<!-- ORDER-DETAIL-AREA START -->
+<div class="shopping-cart-area pt-80 pb-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shopping-cart">
+                  <div class="shop-cart-table">
+                    <div class="table-content table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Image</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>
+                                        <img src="{{ item.product.image.url }}" style="width: 70px; height: 70px; object-fit: cover;">
+                                    </td>
+                                    <td>Rs {{ item.product.price|floatformat:2 }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>Rs {{ item.total|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% comment %} <tr>
+                                    <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
+                                    <td><strong>Rs {{ subtotal }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-end">Shipping:</td>
+                                    <td>Rs {{ shipping }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-end">VAT:</td>
+                                    <td>Rs {{ vat }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-end"><strong>Grand Total:</strong></td>
+                                    <td><strong>Rs {{ total }}</strong></td>
+                                </tr> {% endcomment %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+					<div class="col-md-6">
+						<div class="customer-login payment-details mt-30">
+							<h4 class="title-1 title-border text-uppercase">payment details</h4>
+								<table>
+									<tbody>
+                                        <tr>
+    										<td class="text-left">Cart Subtotal</td>
+												<td class="text-end">Rs {{ subtotal }}</td>
+											</tr>
+											<tr>
+                                                <td class="text-left">Shipping</td>
+                                                <td class="text-end">Rs {{ shipping }}</td>
+											</tr>
+											<tr>
+												<td class="text-left">Vat</td>
+												<td class="text-end">Rs {{ vat }}</td>
+											</tr>
+											<tr>
+												<td class="text-left">Order Total</td>
+												<td class="text-end">Rs{{ total }}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="check-out">
+                    <div class="shop-cart-table check-out-wrap">
+				        <div class="row">
+							<div class="col-md-6">
+								<div class="billing-details pr-20">
+    								<h4 class="title-1 title-border text-uppercase mb-30">billing details</h4>
+                                        <input type="text" name="full_name" value="{{ order.full_name }}" readonly>
+                                        <input type="text" name="payment_status" value="{{ order.payment_status }}" readonly>
+                                        <input type="text" name="order_date" value=" {{ order.created_at|date:"d M, Y" }}" readonly>
+                                        <input type="text" name="shipping_address" value="{{ order.address }}, {{ order.city }}, {{ order.state }}, {{ order.country }}" readonly>
+        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ORDER-DETAIL-AREA END -->
+{% endblock %}
+

@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<!-- HEADING-BANNER START -->
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>My Account</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li>My Account</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- HEADING-BANNER END -->
+<!-- MY-ACCOUNT-AREA START -->
+<div class="my-account-area pt-80 pb-80">
+    <div class="container">
+        <div class="my-account">
+            <div class="row">
+                <!-- Left Column: My Profile -->
+            <div class="col-md-6 mx-auto">
+    <div class="card shadow rounded-4 border-0">
+        <div class="card-body text-center p-4">
+
+            <!-- Profile Image -->
+            <div class="mb-4">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" class="rounded-circle shadow-sm" width="120" height="120" alt="Profile Image" style ="object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'default-avatar.png' %}" class="rounded-circle shadow-sm" width="120" height="120" alt="Default Profile Image" style ="object-fit: cover;">
+                {% endif %}
+            </div>
+
+            <!-- Profile Details -->
+            <div class="text-start px-4">
+                {% if user.first_name and user.last_name %}
+                    <p class="mb-2"><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                {% endif %}
+                {% if user.username %}
+                    <p class="mb-2"><strong>Username:</strong> {{ user.username }}</p>
+                {% endif %}
+                {% if user.email %}
+                    <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
+                {% endif %}
+                {% if user.profile.phone %}
+                    <p class="mb-2"><strong>Phone:</strong> {{ user.profile.phone }}</p>
+                {% endif %}
+                {% if user.address %}
+                    <p class="mb-2"><strong>Address:</strong> {{ user.address }}</p>
+                {% endif %}
+                {% if user.profile.company %}
+                    <p class="mb-2"><strong>Company:</strong> {{ user.profile.company }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                <div class="mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+                <!-- Right Column: Edit, Order, Payment, Wishlist -->
+                <div class="col-md-6">
+                    <div class="panel-group" id="accordion-right">
+
+                        <!-- Edit Profile -->
+                        <div class="panel mb-2">
+                            <div class="my-account-menu">
+                                <a class="collapsed" data-bs-toggle="collapse" href="#edit-profile">Edit Profile</a>
+                            </div>
+                            <div id="edit-profile" class="panel-collapse collapse" data-bs-parent="#accordion-right">
+                                <div class="panel-body">
+                                    <div class="billing-details shop-cart-table">
+                                        <form method="POST" action="{% url 'user_profile' %}" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            {{ form.as_p }}
+                                            <button class="button-one submit-btn-4 text-uppercase mt-3" type="submit" data-text="Update Profile">
+                                                Update Profile
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order History -->
+                        <div class="panel  mb-2">
+                            <div class="my-account-menu my-account-menu-2">
+                                <a href="{% url 'order_history' %}">Order and History</a>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <!-- Wishlist -->
+                        <div class="panel">
+                            <div class="my-account-menu my-account-menu-2">
+                                <a href="{% url 'wishlist' %}">My Wishlist</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MY-ACCOUNT-AREA END -->
+{% endblock %}

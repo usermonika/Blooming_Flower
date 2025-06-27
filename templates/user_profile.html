@@ -1,0 +1,13 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>User Profile</h2>
+    <hr>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    {% if user.first_name or user.last_name %}
+        <p><strong>Full Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    {% endif %}
+    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+</div>
+{% endblock %}

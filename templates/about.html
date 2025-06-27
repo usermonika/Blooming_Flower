@@ -1,0 +1,91 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+			<!-- HEADING-BANNER START -->
+			<div class="heading-banner-area overlay-bg">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="heading-banner">
+								<div class="heading-banner-title">
+									<h2>About Us</h2>
+								</div>
+								<div class="breadcumbs pb-15">
+									<ul>
+										<li><a href="index.html">Home</a></li>
+										<li>About Us</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- HEADING-BANNER END -->
+			<!-- ABOUT-US-AREA START -->
+			<div class="about-us-area  pt-80 pb-80">
+				<div class="container">	
+					<div class="about-us bg-white">
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="about-photo">
+									<img src="{% static 'images/girlflower.jpg' %}" style="width:450px;height:550px;object-fit:cover;" alt="" />
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="about-brief bg-dark-white">
+									<h4 class="title-1 title-border text-uppercase mb-30">about hurst</h4>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magn aliqua. Ut enim ad minim veniam, ommodo consequa.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia is be deserunt mollit anim id est laborum.</p>
+									<p>Sed ut perspiciatis unde omnis iste natus error sit. voluptatem accusantium doloremque laudantium, totam remes aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+									<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ABOUT-US-AREA END -->
+			<!-- TEAM-MEMBER-AREA END -->
+			<div class="team-member-area pb-80">
+				<div class="container">
+					<!-- Section-title start -->
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="section-title text-center">
+								<h2 class="title-border">Team Member</h2>
+							</div>
+						</div>
+					</div>
+					<!-- Section-title end -->	
+					<div class="team-member">
+						<div class="row">
+							<div class="row">
+    {% for member in team_members %}
+    <div class="col-lg-3 col-md-6">
+        <div class="single-member text-center bg-white mt-25">
+            <img src="{{ member.image.url }}" alt="{{ member.name }}" style="width:120px;height:120px;object-fit:cover;" />
+            <h3 class="text-uppercase mt-20">{{ member.name }}</h3>
+            <h4 class="text-uppercase text-gray">{{ member.role }}</h4>
+			<p class="text-gray">{{ member.description|truncatewords:150 }}</p>
+            <div class="team-social">
+                <ul>
+                    {% if member.twitter %}<li><a href="{{ member.twitter }}"><i class="zmdi zmdi-twitter"></i></a></li>{% endif %}
+                    {% if member.rss %}<li><a href="{{ member.rss }}"><i class="zmdi zmdi-rss"></i></a></li>{% endif %}
+                    {% if member.facebook %}<li><a href="{{ member.facebook }}"><i class="zmdi zmdi-facebook"></i></a></li>{% endif %}
+                    {% if member.linkedin %}<li><a href="{{ member.linkedin }}"><i class="zmdi zmdi-linkedin"></i></a></li>{% endif %}
+                    {% if member.pinterest %}<li><a href="{{ member.pinterest }}"><i class="zmdi zmdi-pinterest"></i></a></li>{% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- TEAM-MEMBER-AREA END -->		
+			 
+{% endblock %}
