@@ -447,21 +447,24 @@
 
 							<!-- Login/Register or Profile -->
 							{% if request.user.is_authenticated %}
-							<div class="dropdown">
-								<a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-									{{ request.user.username }}
-								</a>
-								<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-									<li><a class="dropdown-item" href="{% url 'user_profile' %}">My Profile</a></li>
-									<li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-								</ul>
-							</div>
+							<div class="dropdown d-inline-block align-middle">
+    <a class="dropdown-toggle d-flex align-items-center gap-2" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0;background:none;border:none;box-shadow:none;outline:none;">
+        {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" alt="Profile" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;border:2px solid #c8a165;">
+        {% else %}
+            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;border:2px solid #c8a165;">
+        {% endif %}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{% url 'user_profile' %}">My Profile</a></li>
+        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+</div>
 							{% else %}
-							<a href="{% url 'register_login' %}">
-								<button class="button-one submit-btn-4 text-uppercase" type="button" data-text="Login/Register" >
-									Login/Register
-								</button>
-							</a>
+							<a href="{% url 'register_login' %}" class="d-flex align-items-center gap-2" style="text-decoration:none;">
+    <i class="fa fa-user-circle fa-lg" style="color:#c8a165;"></i>
+    <span class="text-uppercase" style="font-weight:600;color:#c8a165;letter-spacing:1px;">Login/Register</span>
+</a>
 							{% endif %}
 
 						</div>
@@ -754,10 +757,12 @@ document.addEventListener('DOMContentLoaded', function () {
 								<div class="single-footer newsletter-item">
 									<h3 class="footer-title  title-border">Email Newsletters</h3>
 									<div class="footer-subscribe">
-										<form action="#">
+										<form action="{% url 'subscribe' %}" method="post">
+											{% csrf_token %}	
 											<input type="text" name="email" placeholder="Email Address..." />
 											<button class="button-one submit-btn-4" type="submit" data-text="Subscribe">Subscribe</button>
 										</form>
+										<div id="newsletter-feedback" style="margin-top:8px;font-size:14px;display:none;"></div>
 									</div>
 								</div>
 							</div>
@@ -1280,7 +1285,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	</body>
 </html>
-  <script src="{% static 'js/vendor/jquery-3.6.0.min.js' %}"></script>
 		<script src="{% static 'js/vendor/jquery-migrate-3.3.2.min.js' %}"></script>
 		<!-- bootstrap js -->
 		<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
@@ -1433,4 +1437,51 @@ document.addEventListener("DOMContentLoaded", function () {
 			}, 3000);
 		}
 		</script>
+
+		<!-- Newsletter subscribe AJAX -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Newsletter subscribe form AJAX
+    const newsletterForm = document.querySelector('.footer-subscribe form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = newsletterForm.querySelector('input[name="email"]');
+            const email = emailInput ? emailInput.value.trim() : '';
+            const url = newsletterForm.getAttribute('action') || '{% url 'subscribe' %}';
+            const csrfToken = newsletterForm.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+            if (!email) {
+                showToast('Please enter your email address.', 'error');
+                return;
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: `email=${encodeURIComponent(email)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast(data.message || 'Subscribed successfully!', 'success');
+                    if (newsletterForm.querySelector('input[name="email"]')) {
+                        newsletterForm.querySelector('input[name="email"]').value = '';
+                    }
+                } else {
+                    showToast(data.message || 'Subscription failed. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred. Please try again.', 'error');
+            });
+        });
+    }
+});
+</script>
 

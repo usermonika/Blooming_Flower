@@ -742,14 +742,19 @@ def product_list(request):
     categories = Category.objects.all()
     colors = Color.objects.all()
 
-    # Filter products by category and color if provided
+    # Filter products by category, color, and search if provided
     category_id = request.GET.get('category')
     color_id = request.GET.get('color')
+    search_query = request.GET.get('search', '').strip()
 
     if category_id:
         products = products.filter(category__id=category_id)
     if color_id:
-        products = products.filter(color__id=color_id)
+        products = products.filter(colors__id=color_id)  # ManyToManyField fix
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query) | Q(description__icontains=search_query)
+        )
 
     # Get user's wishlist items if authenticated
     user_wishlist = []
@@ -761,6 +766,7 @@ def product_list(request):
         'categories': categories,
         'colors': colors,
         'user_wishlist': user_wishlist,
+        'search_query': search_query,
     })
 
 # @login_required
@@ -815,3 +821,15 @@ def rate_product(request, product_id):
             )
 
         return redirect('home')
+
+def subscribe(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            # Here you would typically save the email to your database or mailing list
+            # For demonstration, we'll just print it
+            print(f"Subscribed email: {email}")
+            return redirect('product_list')  # Redirect to a success page or back to product list
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Email is required.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

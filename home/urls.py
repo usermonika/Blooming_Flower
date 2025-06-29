@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from .views import (home ,register_login,logout_view, shop, blog_list, blog_detail,remove_from_cart,
 cart,add_to_cart,cart_view,checkout, aboutus, contact, verify_khalti_payment, update_cart_mini,
 order_history,order_detail ,wishlist_view,add_to_wishlist,product_detail,remove_from_wishlist,
-product_list, rate_product) #, like_blog
+product_list, rate_product, subscribe) #, like_blog
 
 urlpatterns = [
     path('',home,name='home'),
@@ -33,7 +33,7 @@ urlpatterns = [
     path('wishlist-view/', wishlist_view, name='wishlist'),
     path('add-to-wishlist/<int:product_id>/', add_to_wishlist, name='add_to_wishlist'),
     path('product/<int:product_id>/rate/',rate_product, name='rate_product'),
-
+    path('subscribe/', subscribe, name='subscribe'),
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
