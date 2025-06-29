@@ -1,4 +1,4 @@
-  {% load static %}
+{% load static %}
 <html class="no-js" lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -51,6 +51,332 @@
 		<link rel="stylesheet" href="{% static 'css/alert.css' %}">
 
 		<!-- Alert System -->
+		
+		<!-- Custom CSS to fix product action icon positioning -->
+		<style>
+		/* Fix hero slider navigation arrows positioning */
+		.nivo-directionNav a {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			text-align: center !important;
+		}
+		
+		.nivo-directionNav a.nivo-prevNav {
+			padding-left: 6px !important; /* Adjust to center icon in left triangle */
+			padding-right: 2px !important;
+		}
+		
+		.nivo-directionNav a.nivo-nextNav {
+			padding-right: 6px !important; /* Adjust to center icon in right triangle */
+			padding-left: 2px !important;
+		}
+		
+		/* Ensure icons are properly centered vertically and horizontally */
+		.nivo-directionNav a i {
+			display: block !important;
+			line-height: 1 !important;
+			vertical-align: middle !important;
+			font-size: 18px !important;
+			margin: 0 !important;
+		}
+		
+		/* Fine-tune the positioning for better centering */
+		.nivo-directionNav a.nivo-prevNav i {
+			transform: translateX(2px) !important; /* Move icon slightly right in left triangle */
+		}
+		
+		.nivo-directionNav a.nivo-nextNav i {
+			transform: translateX(-2px) !important; /* Move icon slightly left in right triangle */
+		}
+		
+		.product-action {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			padding: 0 !important;
+		}
+		
+		.product-action a {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			float: none !important;
+		}
+		
+		/* Make product cards clickable */
+		.single-product {
+			cursor: pointer !important;
+			transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+		}
+		
+		.single-product:hover {
+			transform: translateY(-2px) !important;
+			box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15) !important;
+		}
+		
+		/* Ensure action buttons remain clickable */
+		.product-action a, 
+		.cart-plus-minus,
+		.wishlist-toggle,
+		[data-add-to-cart] {
+			cursor: pointer !important;
+			position: relative !important;
+			z-index: 10 !important;
+		}
+		
+		/* Custom Modal Styling to match theme color palette */
+		.modal-content {
+			border: none !important;
+			border-radius: 8px !important;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+		}
+		
+		.modal-header {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			color: white !important;
+			border-bottom: none !important;
+			border-radius: 8px 8px 0 0 !important;
+			padding: 20px 25px !important;
+		}
+		
+		.modal-header .modal-title {
+			font-weight: 600 !important;
+			font-size: 1.4rem !important;
+		}
+		
+		.modal-header .btn-close {
+			background: none !important;
+			border: none !important;
+			font-size: 24px !important;
+			color: white !important;
+			opacity: 0.8 !important;
+		}
+		
+		.modal-header .btn-close:hover {
+			opacity: 1 !important;
+		}
+		
+		.modal-body {
+			padding: 30px 25px !important;
+			background-color: #fafafa !important;
+		}
+		
+		.product-info h2 {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 15px !important;
+		}
+		
+		.price-box-3 .new-price {
+			color: #c8a165 !important;
+			font-weight: 700 !important;
+			font-size: 1.5rem !important;
+		}
+		
+		.price-box-3 .old-price {
+			color: #95a5a6 !important;
+		}
+		
+		.quick-add-to-cart {
+			background: #f8f9fa !important;
+			border-radius: 8px !important;
+			padding: 20px !important;
+			margin-bottom: 20px !important;
+			border: 1px solid #e9ecef !important;
+		}
+		
+		.quick-add-to-cart .input-group {
+			max-width: 100% !important;
+			display: flex !important;
+			align-items: stretch !important;
+		}
+		
+		.quick-add-to-cart .btn-primary {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			border: none !important;
+			border-radius: 0 5px 5px 0 !important;
+			padding: 12px 25px !important;
+			font-weight: 600 !important;
+			transition: all 0.3s ease !important;
+			flex: 0 0 auto !important;
+			min-width: 140px !important;
+		}
+		
+		.quick-add-to-cart .btn-primary:hover {
+			background: linear-gradient(135deg, #b8956b, #c8a165) !important;
+			transform: translateY(-1px) !important;
+			box-shadow: 0 4px 12px rgba(200, 161, 101, 0.4) !important;
+		}
+		
+		.quick-add-to-cart .form-control {
+			border: 2px solid #e9ecef !important;
+			border-radius: 5px 0 0 5px !important;
+			padding: 12px 15px !important;
+			font-size: 16px !important;
+			font-weight: 600 !important;
+			text-align: center !important;
+			width: 80px !important;
+			flex: 0 0 80px !important;
+		}
+		
+		.quick-add-to-cart .form-control:focus {
+			border-color: #c8a165 !important;
+			box-shadow: 0 0 0 0.2rem rgba(200, 161, 101, 0.25) !important;
+			outline: none !important;
+		}
+		
+		.quantity-label {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 10px !important;
+			display: block !important;
+		}
+		
+		.quick-desc h6, .order-detail-section h6, .social-sharing h6 {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 10px !important;
+		}
+		
+		.order-detail-section ul li {
+			color: #7f8c8d !important;
+			margin-bottom: 8px !important;
+		}
+		
+		.order-detail-section ul li i {
+			color: #c8a165 !important;
+			margin-right: 8px !important;
+		}
+		
+		.social-sharing ul li a {
+			color: #7f8c8d !important;
+			font-size: 20px !important;
+			margin-right: 10px !important;
+			transition: color 0.3s ease !important;
+		}
+		
+		.social-sharing ul li a:hover {
+			color: #c8a165 !important;
+		}
+		
+		.review-section h5 {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 15px !important;
+		}
+		
+		.star-rating .star {
+			color: #ddd !important;
+			font-size: 28px !important;
+			cursor: pointer !important;
+			transition: color 0.2s ease !important;
+		}
+		
+		.star-rating .star:hover,
+		.star-rating .star.zmdi-star {
+			color: #c8a165 !important;
+		}
+		
+		.review-section .form-control {
+			border: 2px solid #e9ecef !important;
+			border-radius: 5px !important;
+			padding: 12px !important;
+		}
+		
+		.review-section .form-control:focus {
+			border-color: #c8a165 !important;
+			box-shadow: 0 0 0 0.2rem rgba(200, 161, 101, 0.25) !important;
+		}
+		
+		.review-section .btn-primary {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			border: none !important;
+			border-radius: 5px !important;
+			padding: 12px 25px !important;
+			font-weight: 600 !important;
+			transition: all 0.3s ease !important;
+		}
+		
+		.review-section .btn-primary:hover {
+			background: linear-gradient(135deg, #b8956b, #c8a165) !important;
+			transform: translateY(-2px) !important;
+			box-shadow: 0 5px 15px rgba(200, 161, 101, 0.4) !important;
+		}
+		
+		.alert-warning {
+			background-color: #fff8e1 !important;
+			border-color: #f5e6a3 !important;
+			color: #8a6914 !important;
+			border-radius: 5px !important;
+		}
+		
+		.alert-warning a {
+			color: #c8a165 !important;
+			font-weight: 600 !important;
+		}
+		
+		/* Modal backdrop */
+		.modal-backdrop {
+			background-color: rgba(0, 0, 0, 0.6) !important;
+		}
+				/* Profile dropdown styling - Header user name area only */
+		.dropdown .btn-outline-primary {
+			border-color: #c8a165 !important;
+			color: #c8a165 !important;
+			background: transparent !important;
+			font-weight: 600 !important;
+			padding: 8px 16px !important;
+			border-radius: 5px !important;
+			transition: all 0.3s ease !important;
+		}
+		
+		.dropdown .btn-outline-primary:hover,
+		.dropdown .btn-outline-primary:focus,
+		.dropdown .btn-outline-primary.show {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			border-color: #c8a165 !important;
+			color: white !important;
+			box-shadow: 0 4px 12px rgba(200, 161, 101, 0.3) !important;
+		}
+		
+		/* Dropdown menu styling - Header dropdown menu only */
+		.dropdown-menu {
+			border: 1px solid #c8a165 !important;
+			border-radius: 8px !important;
+			box-shadow: 0 8px 25px rgba(200, 161, 101, 0.15) !important;
+			background: white !important;
+			padding: 8px 0 !important;
+		}
+		
+		.dropdown-item {
+			color: #2c3e50 !important;
+			padding: 10px 20px !important;
+			font-weight: 500 !important;
+			transition: all 0.3s ease !important;
+		}
+		
+		.dropdown-item:hover,
+		.dropdown-item:focus {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			color: white !important;
+		}
+		
+		/* Responsive adjustments */
+		@media (max-width: 768px) {
+			.modal-dialog {
+				margin: 10px !important;
+			}
+			
+			.modal-body {
+				padding: 20px 15px !important;
+			}
+			
+			.modal-header {
+				padding: 15px 20px !important;
+			}
+		}
+		</style>
 
     </head>
     <body>	
@@ -156,33 +482,169 @@ document.addEventListener('DOMContentLoaded', function () {
 	addToCartLinks.forEach(link => {
 		link.addEventListener('click', function (e) {
 			e.preventDefault();
+			e.stopPropagation(); // Prevent event bubbling
 			const url = this.href;
+
+			// Add loading state to the button
+			const originalIcon = this.innerHTML;
+			this.innerHTML = '<i class="zmdi zmdi-refresh zmdi-hc-spin"></i>';
+			this.style.pointerEvents = 'none';
 
 			fetch(url)
 				.then(response => response.json())
 				.then(data => {
-					// ✅ Update cart count
-					const cartCountElement = document.querySelector('.cart-icon span');
-					if (cartCountElement) {
-						cartCountElement.textContent = data.cart_item_count;
-					}
-					location.reload();
+					// ✅ Update cart count in multiple places
+					const cartCountElements = document.querySelectorAll('.cart-icon span');
+					cartCountElements.forEach(element => {
+						element.textContent = data.cart_item_count || 0;
+					});
 
-					// ✅ Fetch updated mini cart content
-					return fetch('/update-cart-mini/');
+					// ✅ Update cart items count text
+					const cartItemsText = document.querySelectorAll('.cart-items p span');
+					cartItemsText.forEach(element => {
+						element.textContent = data.cart_item_count || 0;
+					});
+
+					// ✅ Fetch and update mini cart content immediately
+					return fetch('/home/', {
+						method: 'GET',
+						headers: {
+							'X-Requested-With': 'XMLHttpRequest',
+							'Cache-Control': 'no-cache',
+							'Pragma': 'no-cache'
+						}
+					});
 				})
-				.then(response => response.json())
-				.then(data => {
-					const miniCart = document.querySelector('.mini-cart-brief');
-					if (miniCart) {
-						miniCart.innerHTML = data.mini_cart_html;
+				.then(response => response.text())
+				.then(html => {
+					// Parse the response to extract updated cart data
+					const tempDiv = document.createElement('div');
+					tempDiv.innerHTML = html;
+					
+					// Extract the updated mini cart content
+					const newMiniCart = tempDiv.querySelector('.mini-cart-brief');
+					const currentMiniCart = document.querySelector('.mini-cart-brief');
+					
+					if (newMiniCart && currentMiniCart) {
+						// Force update the entire mini cart content
+						currentMiniCart.innerHTML = newMiniCart.innerHTML;
+						
+						// Force browser to re-render the mini cart
+						currentMiniCart.style.display = 'none';
+						currentMiniCart.offsetHeight; // Trigger reflow
+						currentMiniCart.style.display = '';
 					}
+
+					// Also update the whole mini cart if needed
+					const newMiniCartContainer = tempDiv.querySelector('.mini-cart');
+					const currentMiniCartContainer = document.querySelector('.mini-cart');
+					
+					if (newMiniCartContainer && currentMiniCartContainer) {
+						// Update cart icon count specifically
+						const newCartIcon = newMiniCartContainer.querySelector('.cart-icon span');
+						const currentCartIcon = currentMiniCartContainer.querySelector('.cart-icon span');
+						
+						if (newCartIcon && currentCartIcon) {
+							currentCartIcon.textContent = newCartIcon.textContent;
+						}
+					}
+
+					// Show success feedback
+					showToast('Product added to cart successfully!', 'success');
 				})
 				.catch(error => {
 					console.error("Failed to update cart:", error);
+					showToast('Failed to add product to cart. Please try again.', 'error');
+				})
+				.finally(() => {
+					// Restore button state
+					this.innerHTML = originalIcon;
+					this.style.pointerEvents = 'auto';
 				});
 		});
 	});
+
+	// Toast notification function
+	function showToast(message, type = 'info') {
+		const toast = document.createElement('div');
+		toast.className = `toast-notification toast-${type}`;
+		toast.style.cssText = `
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+			color: white;
+			padding: 12px 24px;
+			border-radius: 5px;
+			z-index: 9999;
+			font-weight: 500;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			transform: translateX(400px);
+			transition: transform 0.3s ease;
+		`;
+		toast.textContent = message;
+
+		document.body.appendChild(toast);
+
+		// Animate in
+		setTimeout(() => {
+			toast.style.transform = 'translateX(0)';
+		}, 100);
+
+		// Remove after 3 seconds
+		setTimeout(() => {
+			toast.style.transform = 'translateX(400px)';
+			setTimeout(() => {
+				if (toast.parentNode) {
+					toast.parentNode.removeChild(toast);
+				}
+			}, 300);
+		}, 3000);
+	}
+
+	// ✅ Function to refresh mini cart content
+	function refreshMiniCart() {
+		return fetch('/home/', {
+			method: 'GET',
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest',
+				'Cache-Control': 'no-cache',
+				'Pragma': 'no-cache'
+			}
+		})
+		.then(response => response.text())
+		.then(html => {
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = html;
+			
+			// Update mini cart content
+			const newMiniCart = tempDiv.querySelector('.mini-cart-brief');
+			const currentMiniCart = document.querySelector('.mini-cart-brief');
+			
+			if (newMiniCart && currentMiniCart) {
+				currentMiniCart.innerHTML = newMiniCart.innerHTML;
+			}
+
+			// Update cart count
+			const newCartIcon = tempDiv.querySelector('.cart-icon span');
+			const currentCartIcon = document.querySelector('.cart-icon span');
+			
+			if (newCartIcon && currentCartIcon) {
+				currentCartIcon.textContent = newCartIcon.textContent;
+			}
+		})
+		.catch(error => {
+			console.log('Mini cart refresh failed:', error);
+		});
+	}
+
+	// ✅ Add hover event to cart icon to refresh content
+	const cartIcon = document.querySelector('.cart-icon');
+	if (cartIcon) {
+		cartIcon.addEventListener('mouseenter', function() {
+			refreshMiniCart();
+		});
+	}
 });
 
 </script>
@@ -329,7 +791,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			<!-- FOOTER END -->
 			<!-- QUICKVIEW PRODUCT MODAL -->
 		<div id="quickview-wrapper">
-  <div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+  <div class="modal fade" id="productModal" tabindex="-1" role="dialog" data-bs-backdrop="true" data-bs-keyboard="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -370,11 +832,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 <!-- Quantity and Add to Cart -->
                 <div class="quick-add-to-cart mb-3">
-                  <form method="post" class="cart">
+                  <label class="quantity-label">Quantity:</label>
+                  <form method="post" action="{% url 'add_to_cart' product_detail.id %}" class="cart">
                     {% csrf_token %}
-                    <div class="input-group" style="max-width: 150px;">
-                      <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control" />
-                      <button class="btn btn-primary" type="submit">Add to Cart</button>
+                    <div class="input-group">
+                      <input type="number" name="quantity" id="quantity" value="1" min="1" max="99" class="form-control" />
+                      <button class="btn btn-primary" type="submit">
+                        <i class="zmdi zmdi-shopping-cart-plus me-2"></i>Add to Cart
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -450,6 +915,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("DOMContentLoaded", function () {
   const modal = document.getElementById("productModal");
 
+  // Handle star rating functionality
   modal.addEventListener("shown.bs.modal", function () {
     const stars = modal.querySelectorAll(".star-rating .star");
     const ratingInput = modal.querySelector("#rating-input");
@@ -475,18 +941,332 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   });
+
+  // Handle modal close events
+  modal.addEventListener("hidden.bs.modal", function () {
+    // Go back to previous page when modal is closed
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // If no history, redirect to products page
+      window.location.href = "{% url 'product_list' %}";
+    }
+  });
+
+  // Handle close button click
+  const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
+  closeButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    });
+  });
+
+  // Handle backdrop click (clicking outside modal)
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
+  });
+
+  // Handle ESC key press
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
+  });
+
+  // Handle modal form submission for "Add to Cart"
+  const modalCartForm = modal.querySelector('form.cart');
+  if (modalCartForm) {
+    modalCartForm.addEventListener('submit', function(e) {
+      // Let the form submit normally (POST request)
+      // The backend will handle the redirect
+      console.log('Modal add to cart form submitted');
+    });
+  }
+
+  // Make entire product card clickable to open modal
+  document.addEventListener('click', function(e) {
+    // Find the closest product card
+    const productCard = e.target.closest('.single-product');
+    
+    if (productCard) {
+      // Check if the click was on an action button or link that should not trigger modal
+      const isActionElement = e.target.closest('.product-action') || 
+                              e.target.closest('button') || 
+                              e.target.closest('.cart-plus-minus') ||
+                              e.target.closest('.wishlist-toggle') ||
+                              e.target.closest('[data-add-to-cart]') ||
+                              e.target.closest('a[data-add-to-cart]');
+      
+      if (isActionElement) {
+        // For add to cart buttons, prevent modal from opening
+        if (e.target.closest('[data-add-to-cart]') || e.target.closest('a[data-add-to-cart]')) {
+          e.stopPropagation();
+        }
+        return; // Don't open modal for action elements
+      }
+
+      // Check if clicked on a quick view link or image link
+      const clickedLink = e.target.closest('a');
+      if (clickedLink) {
+        const href = clickedLink.getAttribute('href');
+        const hasModalTarget = clickedLink.getAttribute('data-bs-target') === '#productModal';
+        
+        // If it's a quick view link with modal target, let it work naturally
+        if (hasModalTarget && href) {
+          e.preventDefault();
+          e.stopPropagation();
+          loadProductModal(href);
+          return;
+        }
+        
+        // If it's a product detail link, convert to modal
+        if (href && (href.includes('product_detail') || href.includes('product/'))) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const productId = extractProductIdFromUrl(href);
+          if (productId) {
+            loadProductModalById(productId);
+          }
+          return;
+        }
+      }
+
+      // Try to get product ID from data attribute
+      const productIdFromData = productCard.getAttribute('data-product-id');
+      if (productIdFromData) {
+        e.preventDefault();
+        e.stopPropagation();
+        loadProductModalById(productIdFromData);
+        return;
+      }
+
+      // Fallback: look for any quick view link in the card
+      const quickViewLink = productCard.querySelector('a[href*="quickview"]') || 
+                           productCard.querySelector('a[data-bs-target="#productModal"]');
+      
+      if (quickViewLink) {
+        e.preventDefault();
+        e.stopPropagation();
+        const href = quickViewLink.getAttribute('href');
+        if (href) {
+          loadProductModal(href);
+        }
+        return;
+      }
+
+      // Final fallback: look for any product link
+      const productLink = productCard.querySelector('a[href*="product"]') || 
+                         productCard.querySelector('.product-img a') ||
+                         productCard.querySelector('.post-title a');
+      
+      if (productLink) {
+        const href = productLink.getAttribute('href');
+        if (href) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const productId = extractProductIdFromUrl(href);
+          if (productId) {
+            loadProductModalById(productId);
+          }
+        }
+      }
+    }
+  });
+
+  // Function to extract product ID from URL
+  function extractProductIdFromUrl(url) {
+    // Match patterns like /product/123/, /product_detail/123/, or /product/quickview/123/
+    const match = url.match(/\/product(?:\/quickview|_detail)?\/(\d+)\/?/);
+    return match ? match[1] : null;
+  }
+
+  // Function to load product modal by ID
+  function loadProductModalById(productId) {
+    // Construct the quick view URL using the correct pattern
+    const quickViewUrl = `/product/quickview/${productId}/`;
+    loadProductModal(quickViewUrl);
+  }
+
+  // Function to load product modal content
+  function loadProductModal(url) {
+    console.log('Loading product modal from URL:', url);
+    
+    fetch(url)
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.text();
+      })
+      .then(html => {
+        console.log('Received HTML, length:', html.length);
+        
+        // Create a temporary div to parse the response
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        
+        // Look for product_detail data in the response
+        const productDetailScript = tempDiv.querySelector('script:contains("product_detail")');
+        console.log('Found product detail script:', !!productDetailScript);
+        
+        // Try to extract modal content from the response
+        const modalBody = tempDiv.querySelector('#productModal .modal-body');
+        const quickviewWrapper = tempDiv.querySelector('#quickview-wrapper');
+        
+        console.log('Found modal body:', !!modalBody);
+        console.log('Found quickview wrapper:', !!quickviewWrapper);
+        
+        if (modalBody) {
+          // Update the existing modal body with new content
+          const existingModalBody = modal.querySelector('.modal-body');
+          if (existingModalBody) {
+            existingModalBody.innerHTML = modalBody.innerHTML;
+            console.log('Updated modal body with new content');
+          }
+        } else if (quickviewWrapper) {
+          // Update the entire modal content
+          const existingModalContent = modal.querySelector('.modal-content');
+          const newModalContent = quickviewWrapper.querySelector('.modal-content');
+          if (existingModalContent && newModalContent) {
+            existingModalContent.innerHTML = newModalContent.innerHTML;
+            console.log('Updated modal content from quickview wrapper');
+          }
+        } else {
+          // Fallback: Build modal content from available data
+          console.log('No modal content found, building from scratch');
+          buildModalFromResponse(tempDiv);
+        }
+        
+        // Show the modal
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+        
+        // Update URL without page reload
+        if (history.pushState) {
+          history.pushState(null, null, url);
+        }
+        
+        // Re-initialize modal functionality for the new content
+        initializeModalContent();
+      })
+      .catch(error => {
+        console.error('Error loading product modal:', error);
+        // Fallback: navigate to the URL
+        window.location.href = url;
+      });
+  }
+
+  // Function to build modal content from response data
+  function buildModalFromResponse(tempDiv) {
+    // Try to extract product data from the page
+    const productName = tempDiv.querySelector('h1, h2, .product-title, .post-title a, .product-info h2');
+    const productImage = tempDiv.querySelector('.product-img img, .product-image img, .product-images img');
+    const productPrice = tempDiv.querySelector('.pro-price, .price, .new-price, .pro-price-2');
+    const productDescription = tempDiv.querySelector('.description, .product-description, p');
+    
+    console.log('Extracted data:', {
+      name: productName ? productName.textContent : 'Not found',
+      image: productImage ? productImage.src : 'Not found',
+      price: productPrice ? productPrice.textContent : 'Not found'
+    });
+    
+    if (productName || productImage || productPrice) {
+      const modalBody = modal.querySelector('.modal-body');
+      if (modalBody) {
+        modalBody.innerHTML = `
+          <div class="row">
+            <div class="col-md-5 text-center">
+              <div class="product-images">
+                ${productImage ? `<img src="${productImage.src}" alt="${productImage.alt || 'Product'}" class="img-fluid" style="width: 100%; max-width: 350px; height: 450px; object-fit: cover;" />` : '<p>No image available</p>'}
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div class="product-info">
+                <h2>${productName ? (productName.textContent || productName.innerText) : 'Product'}</h2>
+                <div class="price-box-3">
+                  <hr />
+                  <div class="s-price-box">
+                    <span class="new-price fw-bold text-success fs-5">${productPrice ? (productPrice.textContent || productPrice.innerText) : 'Price not available'}</span>
+                  </div>
+                  <hr />
+                </div>
+                <div class="quick-desc mb-3">
+                  <h6>Description:</h6>
+                  <p>${productDescription ? (productDescription.textContent || productDescription.innerText) : 'Product details will be loaded shortly...'}</p>
+                </div>
+                <div class="quick-add-to-cart mb-3">
+                  <label class="quantity-label">Quantity:</label>
+                  <div class="input-group">
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="form-control" />
+                    <button class="btn btn-primary" type="button">
+                      <i class="zmdi zmdi-shopping-cart-plus me-2"></i>Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        console.log('Built enhanced modal content from extracted data');
+      }
+    } else {
+      const modalBody = modal.querySelector('.modal-body');
+      if (modalBody) {
+        modalBody.innerHTML = '<p>Product details are being loaded. Please try again.</p>';
+      }
+      console.log('No product data found in response, showing fallback message');
+    }
+  }
+
+  // Function to initialize modal content (star ratings, form handlers, etc.)
+  function initializeModalContent() {
+    // Re-initialize star rating functionality
+    const stars = modal.querySelectorAll(".star-rating .star");
+    const ratingInput = modal.querySelector("#rating-input");
+
+    if (stars && ratingInput) {
+      stars.forEach((star) => {
+        star.addEventListener("click", function () {
+          const rating = parseInt(this.getAttribute("data-value"));
+          ratingInput.value = rating;
+
+          stars.forEach((s) => {
+            s.classList.remove("zmdi-star");
+            s.classList.add("zmdi-star-outline");
+          });
+
+          stars.forEach((s) => {
+            if (parseInt(s.getAttribute("data-value")) <= rating) {
+              s.classList.remove("zmdi-star-outline");
+              s.classList.add("zmdi-star");
+            }
+          });
+        });
+      });
+    }
+
+    // Re-initialize form submission handlers
+    const modalCartForm = modal.querySelector('form.cart');
+    if (modalCartForm) {
+      modalCartForm.addEventListener('submit', function(e) {
+        console.log('Modal add to cart form submitted');
+      });
+    }
+  }
 });
 </script>
-
-
-{% if product_detail %}
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var myModal = new bootstrap.Modal(document.getElementById('productModal'));
-    myModal.show();
-  });
-</script>
-{% endif %}
 
 
 {% if product_detail %}
@@ -528,4 +1308,129 @@ document.addEventListener("DOMContentLoaded", function () {
 		<!-- main js -->
 		<script src="{% static 'js/main.min.js' %}"></script>
 		<script src="{% static 'js/alert-system.js' %}"></script>
+		
+		<!-- Global Wishlist Toggle Functionality -->
+		<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			// Initialize wishlist toggle functionality
+			initWishlistToggle();
+			
+			// Re-initialize after AJAX content loads
+			document.addEventListener('contentLoaded', function() {
+				initWishlistToggle();
+			});
+		});
+
+		function initWishlistToggle() {
+			document.querySelectorAll('.wishlist-toggle').forEach(el => {
+				// Remove existing event listeners to prevent duplicates
+				el.removeEventListener('click', handleWishlistToggle);
+				el.addEventListener('click', handleWishlistToggle);
+			});
+		}
+
+		function handleWishlistToggle(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			const icon = this.querySelector('i');
+			const productId = this.dataset.productId;
+			
+			if (!icon || !productId) return;
+			
+			// Add loading state
+			const originalClass = icon.className;
+			icon.className = 'zmdi zmdi-refresh zmdi-hc-spin';
+			this.style.pointerEvents = 'none';
+			
+			fetch(`/add-to-wishlist/${productId}/`, {
+				method: 'POST',
+				headers: {
+					'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}',
+					'X-Requested-With': 'XMLHttpRequest',
+				},
+			})
+			.then(res => res.json())
+			.then(data => {
+				if (data.status === 'added') {
+					icon.className = 'zmdi zmdi-favorite';
+					icon.style.color = '#e74c3c';
+					showNotification('Added to wishlist!', 'success');
+				} else if (data.status === 'removed') {
+					icon.className = 'zmdi zmdi-favorite-outline';
+					icon.style.color = '';
+					showNotification('Removed from wishlist!', 'info');
+				}
+				
+				// Update wishlist count if element exists
+				const wishlistCount = document.querySelector('.wishlist-count');
+				if (wishlistCount && data.wishlist_count !== undefined) {
+					wishlistCount.textContent = data.wishlist_count;
+				}
+				
+				// Trigger custom event for other components to listen
+				document.dispatchEvent(new CustomEvent('wishlistUpdated', {
+					detail: { productId, status: data.status, count: data.wishlist_count }
+				}));
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				icon.className = originalClass;
+				showNotification('Failed to update wishlist. Please try again.', 'error');
+			})
+			.finally(() => {
+				this.style.pointerEvents = '';
+			});
+		}
+
+		// Enhanced notification function that works with existing alert system
+		function showNotification(message, type = 'info') {
+			// Try to use existing alert system first
+			if (typeof showAlert === 'function') {
+				showAlert(message, type);
+				return;
+			}
+			
+			// Fallback to custom toast
+			const existingToast = document.querySelector('.toast-notification');
+			if (existingToast) {
+				existingToast.remove();
+			}
+
+			const toast = document.createElement('div');
+			toast.className = `toast-notification toast-${type}`;
+			toast.style.cssText = `
+				position: fixed;
+				top: 20px;
+				right: 20px;
+				background: ${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#3498db'};
+				color: white;
+				padding: 15px 20px;
+				border-radius: 5px;
+				z-index: 10000;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+				transform: translateX(300px);
+				transition: transform 0.3s ease;
+				font-weight: 500;
+			`;
+			toast.textContent = message;
+			
+			document.body.appendChild(toast);
+			
+			// Animate in
+			setTimeout(() => {
+				toast.style.transform = 'translateX(0)';
+			}, 10);
+			
+			// Remove after 3 seconds
+			setTimeout(() => {
+				toast.style.transform = 'translateX(300px)';
+				setTimeout(() => {
+					if (toast.parentNode) {
+						toast.parentNode.removeChild(toast);
+					}
+				}, 300);
+			}, 3000);
+		}
+		</script>
 

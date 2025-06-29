@@ -2,8 +2,8 @@ import logging, requests,stripe
 
 logger = logging.getLogger(__name__)
 
-from django.shortcuts import render
-from Ecommerce.models import Product, DiscountOffer,UpcomingProduct, Blog, Cart, CartItem,Color,Category, Like, Comment, Order, TeamMember,ContactInfo,Wishlist
+from django.shortcuts import render, get_object_or_404
+from Ecommerce.models import Product, DiscountOffer,UpcomingProduct, Blog, Cart, CartItem,Color,Category, Like, Comment, Order, TeamMember,ContactInfo,Wishlist, Review
 from django.db.models import Q
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -58,6 +58,11 @@ def home(request, id=None):
     new_products = Product.objects.filter(is_new=True)
     featured_products = Product.objects.filter(Q(label='new') | Q(label='sale'))
 
+    # Get user's wishlist items if authenticated
+    user_wishlist = []
+    if request.user.is_authenticated:
+        user_wishlist = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
+
     context = {
         'products': products,
         'new_products': new_products,
@@ -68,7 +73,8 @@ def home(request, id=None):
         'cart_items': items,
         'cart_total': round(total, 2),
         'product_detail': product_detail,
-        'contact': contact
+        'contact': contact,
+        'user_wishlist': user_wishlist,
     }
     return render(request, "index-2.html", context)
 
@@ -190,6 +196,14 @@ def add_to_cart(request, product_id):
     print("Add to cart called for product_id:", product_id)
     product = get_object_or_404(Product, id=product_id)
     print("Product found:", product.name)
+    
+    # Get quantity from form (POST) or default to 1 (GET)
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))
+        print(f"POST request with quantity: {quantity}")
+    else:
+        quantity = 1
+        print("GET request, using default quantity: 1")
 
     if request.user.is_authenticated:
         print("User is authenticated:", request.user.username)
@@ -197,8 +211,11 @@ def add_to_cart(request, product_id):
         print(f"Cart fetched or created: {cart}, created={created}")
         item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         if not created:
-            item.quantity += 1
-            print("Incremented item quantity to", item.quantity)
+            item.quantity += quantity
+            print(f"Incremented item quantity by {quantity} to {item.quantity}")
+        else:
+            item.quantity = quantity
+            print(f"Created new item with quantity {quantity}")
         item.save()
         total_quantity = sum(ci.quantity for ci in cart.items.all())
         print("Total quantity in DB cart:", total_quantity)
@@ -206,15 +223,22 @@ def add_to_cart(request, product_id):
         print("User is NOT authenticated. Using session cart.")
         session_cart = request.session.get('cart', {})
         print("Session cart before update:", session_cart)
-        session_cart[str(product_id)] = session_cart.get(str(product_id), 0) + 1
+        session_cart[str(product_id)] = session_cart.get(str(product_id), 0) + quantity
         request.session['cart'] = session_cart
         request.session.modified = True  # Important to save session changes
         print("Session cart after update:", request.session['cart'])
         total_quantity = sum(request.session['cart'].values())
         print("Total quantity in session cart:", total_quantity)
 
-    print("Returning JsonResponse with cart_item_count =", total_quantity)
-    return JsonResponse({'cart_item_count': total_quantity})
+    # Handle different response types
+    if request.method == 'POST':
+        # For form submissions (modal), redirect to prevent form resubmission
+        print("POST request - redirecting to cart or product list")
+        return redirect('cart')
+    else:
+        # For AJAX requests (product cards), return JSON
+        print("GET request - returning JsonResponse with cart_item_count =", total_quantity)
+        return JsonResponse({'cart_item_count': total_quantity})
 
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
@@ -620,8 +644,19 @@ def wishlist_view(request):
     return render(request, 'wishlist.html', {'products': products})
 
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+def product_detail(request, id=None, pk=None):
+    # Handle both pk and id parameters for flexibility
+    product_id = id or pk
+    product = get_object_or_404(Product, pk=product_id)
+    
+    # Check if this is an AJAX request or quickview
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or 'quickview' in request.path:
+        # Return just the modal content for AJAX requests
+        return render(request, 'base/base.html', {
+            'product_detail': product,
+            'is_quickview': True
+        })
+    
     return render(request, 'product_detail.html', {'product': product})
 
 
@@ -716,15 +751,17 @@ def product_list(request):
     if color_id:
         products = products.filter(color__id=color_id)
 
+    # Get user's wishlist items if authenticated
+    user_wishlist = []
+    if request.user.is_authenticated:
+        user_wishlist = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
+
     return render(request, 'product_list.html', {
         'products': products,
         'categories': categories,
         'colors': colors,
+        'user_wishlist': user_wishlist,
     })
-    
-from Ecommerce.models import Product, Review
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
 
 # @login_required
 # def rate_product(request, product_id):

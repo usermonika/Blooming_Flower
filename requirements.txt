@@ -4,10 +4,7 @@ charset-normalizer==3.4.2
 Django==5.2.1
 django-filter==25.1
 django-grappelli==4.0.2
-<<<<<<< HEAD
 django-khalti==1.0
-=======
->>>>>>> 62825bc (first commit)
 djangorestframework==3.16.0
 idna==3.10
 pillow==11.2.1

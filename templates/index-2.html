@@ -124,8 +124,8 @@
 										</div>
 										<div class="product-action clearfix">
 													<a href="{% url 'add_to_wishlist' product_id=product.id %}" class="wishlist-toggle" data-product-id="{{ product.id }}" title="Wishlist">
-														<i class="zmdi zmdi-favorite-outline"></i>
-														</a>										<a href="{% url 'product_quickview' id=product.id %}" title="Quick View">
+														<i class="{% if product.id in user_wishlist %}zmdi zmdi-favorite{% else %}zmdi zmdi-favorite-outline{% endif %}"{% if product.id in user_wishlist %} style="color: #e74c3c;"{% endif %}></i>
+													</a>										<a href="{% url 'product_quickview' id=product.id %}" title="Quick View">
 										<i class="zmdi zmdi-zoom-in"></i>
 										</a>	
 										<a href="{% url 'add_to_cart' product.id %}" title="Add To Cart" data-add-to-cart><i class="zmdi zmdi-shopping-cart-plus"></i></a>
@@ -226,9 +226,9 @@
 							<!-- Nav tabs -->
 							<ul class="tab-menu nav clearfix">
 								<li><a class="active" href="#new-arrivals" data-bs-toggle="tab">New Arrivals</a></li>
-								<li><a href="#best-seller"  data-bs-toggle="tab">Best Seller </a></li>
+								{% comment %} <li><a href="#best-seller"  data-bs-toggle="tab">Best Seller </a></li>
 								<li><a href="#most-view" data-bs-toggle="tab">Most View </a></li>
-								<li><a href="#discounts" data-bs-toggle="tab">Discounts</a></li>
+								<li><a href="#discounts" data-bs-toggle="tab">Discounts</a></li> {% endcomment %}
 							</ul>
 						</div>	
 						<div class="col-lg-12">
@@ -271,7 +271,7 @@
 													</div>
 													<div class="product-action clearfix">
 														<a href="{% url 'add_to_wishlist' product_id=product.id %}" class="wishlist-toggle" data-product-id="{{ product.id }}" title="Wishlist">
-														<i class="zmdi zmdi-favorite-outline"></i>
+														<i class="{% if product.id in user_wishlist %}zmdi zmdi-favorite{% else %}zmdi zmdi-favorite-outline{% endif %}"{% if product.id in user_wishlist %} style="color: #e74c3c;"{% endif %}></i>
 														</a>
 														<a href="{% url 'product_quickview' id=product.id %}" title="Quick View">
 														<i class="zmdi zmdi-zoom-in"></i>
@@ -366,36 +366,5 @@
 				</div>
 			</div>
 			<!-- BRAND-LOGO-AREA END --> {% endcomment %}
-			
-<script>
-document.querySelectorAll('.wishlist-toggle').forEach(el => {
-  el.addEventListener('click', function(e) {
-    e.preventDefault();
-    const icon = this.querySelector('i');
-    const productId = this.dataset.productId;
-
-    fetch(`/add-to-wishlist/${productId}/`, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': '{{ csrf_token }}',
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === 'added') {
-        icon.classList.remove('zmdi-favorite-outline');
-        icon.classList.add('zmdi-favorite');
-        icon.style.color = 'red';
-      } else if (data.status === 'removed') {
-        icon.classList.remove('zmdi-favorite');
-        icon.classList.add('zmdi-favorite-outline');
-        icon.style.color = '';
-      }
-    })
-    .catch(error => console.error('Error:', error));
-  });
-});
-</script>
 
 {% endblock %}

@@ -59,18 +59,48 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import ProfileUpdateForm
-@login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+import json
 
+@login_required
 def user_profile(request):
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('user_profile')
+        # Handle AJAX requests
+        if request.headers.get('Content-Type') == 'application/json':
+            try:
+                data = json.loads(request.body)
+                # Update user profile fields
+                user = request.user
+                user.first_name = data.get('first_name', user.first_name)
+                user.last_name = data.get('last_name', user.last_name)
+                user.email = data.get('email', user.email)
+                user.address = data.get('address', user.address)
+                user.save()
+                
+                return JsonResponse({'success': True, 'message': 'Profile updated successfully!'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'message': str(e)})
         else:
-            messages.error(request, "Please correct the error below.")
+            # Handle form submission
+            form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Profile updated successfully!")
+                return redirect('user_profile')
+            else:
+                messages.error(request, "Please correct the errors below.")
     else:
         form = ProfileUpdateForm(instance=request.user)
 
-    return render(request, 'my-account.html', {'form': form})
+    # Get user statistics
+    user = request.user
+    context = {
+        'form': form,
+        'user': user,
+        'order_count': getattr(user, 'order_set', None) and user.order_set.count() or 0,
+        'wishlist_count': getattr(user, 'wishlist_set', None) and user.wishlist_set.count() or 0,
+        'review_count': getattr(user, 'review_set', None) and user.review_set.count() or 0,
+    }
+    
+    return render(request, 'user_profile.html', context)
