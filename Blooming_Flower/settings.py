@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'Ecommerce',
     'home',
     'accounts',
+    'django_extensions',
     
     ]
 
