@@ -25,7 +25,7 @@ Shop staff manage everything from the Django admin panel (styled with **django-b
 | API | Django REST Framework (token + session auth) |
 | Database | SQLite by default, MySQL supported via PyMySQL |
 | Frontend | Django templates, Bootstrap, jQuery, plain JavaScript (`fetch`) |
-| Payments | Stripe (test mode), Khalti |
+| Payments | Stripe (test mode), Khalti — keys in `.env` |
 | Admin | Django admin + django-baton theme |
 | Images | Pillow, stored in `media/` |
 
@@ -187,9 +187,8 @@ Every model above is registered in `/admin/`, so staff can add products, set dis
 
 ## Known limitations and next steps
 
-- **Secrets in code**: the Stripe test keys are hard-coded in `settings.py` and `.env.example`. Move them to environment variables, and roll the keys if this repository was ever shared.
+- **Secrets**: payment keys are read from the git-ignored `.env` file (loaded at the top of `settings.py`). Older commits once contained the Stripe test secret key, so roll that key in the Stripe dashboard.
 - **Currency**: Stripe charges in `usd`, but prices are in Nepali Rupees, so the amount charged doesn't match the price shown. Switch the currency to `npr`, or convert the amount.
-- **`.env` not loaded**: settings use `os.getenv`, but nothing loads the `.env` file. `python-dotenv` would fix this.
 - **Duplicate emails**: email is not unique on `CustomUser`. New registrations now reject duplicate emails, but some older accounts share one.
 - **Stripe Charges API**: the project uses the older Charges + token flow. Stripe recommends Payment Intents for new work, which also supports 3-D Secure cards.
 - **Product page route**: `/product/<id>/` is declared twice in `home/urls.py`, so the `product_detail` name always resolves to the home view, and `product_detail.html` does not exist.

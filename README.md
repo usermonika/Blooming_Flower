@@ -41,26 +41,26 @@ pip install -r requirements.txt
 
 ## 4. Configure payment keys
 
-Settings are read with `os.getenv`, and the project does **not** load `.env` automatically. Set the variables in your shell before starting the server. `.env.example` lists the names.
+Keys are kept in a `.env` file in the project root. Git ignores it, so secrets never get committed. `settings.py` reads it automatically at startup.
 
-Windows (PowerShell):
-
-```powershell
-$env:KHALTI_PUBLIC_KEY = "..."
-$env:KHALTI_SECRET_KEY = "..."
-$env:KHALTI_VERIFY_URL = "https://khalti.com/api/v2/payment/verify/"
-```
-
-macOS / Linux:
+Copy the example and fill in your values:
 
 ```bash
-export KHALTI_PUBLIC_KEY="..."
-export KHALTI_SECRET_KEY="..."
-export KHALTI_VERIFY_URL="https://khalti.com/api/v2/payment/verify/"
+cp .env.example .env
 ```
 
+```
+KHALTI_PUBLIC_KEY=...
+KHALTI_SECRET_KEY=...
+KHALTI_VERIFY_URL=https://khalti.com/api/v2/payment/verify/
+
+STRIPE_TEST_PUBLIC_KEY=pk_test_...
+STRIPE_TEST_SECRET_KEY=sk_test_...
+```
+
+- **Stripe:** get **test** keys from the Stripe dashboard (Developers → API keys). Never put keys, live or test, in `settings.py`. GitHub blocks pushes that contain them.
 - **Khalti:** without these keys the rest of the site still works, and Khalti checkout returns a "Khalti is not configured" message.
-- **Stripe:** the test keys are currently written directly in `Blooming_Flower/settings.py` (`STRIPE_TEST_PUBLIC_KEY`, `STRIPE_TEST_SECRET_KEY`). Use your own **test** keys from the Stripe dashboard. Never put live keys in the code.
+- Variables already set in your shell override the values in `.env`.
 
 ## 5. Set up the database
 
@@ -119,4 +119,4 @@ Use any future expiry date, any 3-digit CVC and any postcode.
 | `DisallowedHost` / "Bad Request (400)" | Add the host you are using to `ALLOWED_HOSTS` in `settings.py` |
 | Images don't show | Make sure `DEBUG = True` locally; media files are only served by Django in debug mode |
 | Login says "Invalid credentials" | Check the email/username and password. Usernames cannot contain spaces |
-| Khalti says "not configured" | Set the `KHALTI_*` variables (step 4) in the same terminal before `runserver` |
+| Khalti says "not configured" | Fill in the `KHALTI_*` values in `.env` (step 4) and restart the server |
