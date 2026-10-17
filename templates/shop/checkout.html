@@ -61,14 +61,22 @@
                                                 <option>Gandaki</option>
                                                 <option>Bagmati</option>
                                                 <option>Chitwan</option>
+                                                <option>Kathmandu</option>
+                                                <option>Pokhara</option>        
+                                                <option>Biratnagar</option>
+                                                <option>Birgunj</option>    
+                                                <option>Butwal</option>
+                                                <option>Janakpur</option>
+                                                <option>Bhaktapur</option>
+                                                <option>Other</option>
                                             </select>
                                             <input type="text" name="city" placeholder="Town / City here..." required>
                                              <label>
     <input type="radio" name="payment_method" value="stripe" checked> Pay with Stripe
   </label>
-  <label>
+  {% comment %} <label>
     <input type="radio" name="payment_method" value="khalti"> Pay with Khalti
-  </label>
+  </label> {% endcomment %}
                                         </div>
                                     </div>
 
@@ -142,7 +150,7 @@
     </div>
 </div>
 <!-- Load Khalti Checkout JS once -->
-<script src="https://a.khalti.com/static/khalti-checkout.js"></script>
+{% comment %} <script src="https://a.khalti.com/static/khalti-checkout.js"></script>
 
 <script>
   // Khalti checkout configuration
@@ -202,7 +210,7 @@
       alert("⚠️ Invalid amount.");
     }
   };
-</script>
+</script> {% endcomment %}
 
 
 <script src="https://js.stripe.com/v3/"></script>
@@ -241,8 +249,8 @@
 
                 // Submit the form
                 form.submit();
-                {% comment %} alert("Successfully transaction Complete");
-                alert(token); {% endcomment %}
+                alert("Successfully transaction Complete");
+                alert(token);
             }
         });
     });

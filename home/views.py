@@ -8,6 +8,8 @@ from django.db.models import Q
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.http import Http404
+from django.template import TemplateDoesNotExist
 
 def home(request, id=None):
     product_detail = None
@@ -137,6 +139,7 @@ def cart(request):
                 item_total = product.price * quantity
                 subtotal += item_total
                 cart_items.append({
+                    'id': product.id,  # session cart is keyed by product id
                     'product': product,
                     'quantity': quantity,
                     'total': item_total
@@ -234,6 +237,9 @@ def add_to_cart(request, product_id):
     if request.method == 'POST':
         # For form submissions (modal), redirect to prevent form resubmission
         print("POST request - redirecting to cart or product list")
+        return redirect('cart')
+    elif 'text/html' in request.headers.get('Accept', ''):
+        # Plain link click (e.g. from the wishlist page), not fetch()
         return redirect('cart')
     else:
         # For AJAX requests (product cards), return JSON
@@ -337,9 +343,15 @@ def update_cart_mini(request):
 
 
 def remove_from_cart(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id)
-    item.delete()
-    return redirect('cart_view')  # Or wherever your cart page is
+    if request.user.is_authenticated:
+        item = get_object_or_404(CartItem, id=item_id, cart__user=request.user, cart__is_active=True)
+        item.delete()
+    else:
+        # Session cart is keyed by product id
+        session_cart = request.session.get('cart', {})
+        session_cart.pop(str(item_id), None)
+        request.session['cart'] = session_cart
+    return redirect('cart')
 
 from decimal import Decimal
 from django.shortcuts import render, redirect
@@ -428,11 +440,14 @@ def checkout(request):
         if request.user.is_authenticated:
             order.user = request.user
             order.save()
-            if cart:
-                cart.is_active = False
-                cart.save()
-        else:
-            request.session.pop('cart', None)
+
+        def clear_cart():
+            if request.user.is_authenticated:
+                if cart:
+                    cart.is_active = False
+                    cart.save()
+            else:
+                request.session.pop('cart', None)
 
         if payment_method == 'stripe':
             try:
@@ -445,8 +460,12 @@ def checkout(request):
                 )
                 order.payment_status = 'Paid'
                 order.save()
+                # Only empty the cart once the card has actually been charged
+                clear_cart()
                 return redirect(f'/checkout?order_id={order.id}')
             except stripe.error.StripeError as e:
+                order.payment_status = 'Failed'
+                order.save()
                 return render(request, 'shop/checkout.html', {
                     'error': str(e),
                     'cart_items': cart_items,
@@ -459,7 +478,10 @@ def checkout(request):
                 })
 
         elif payment_method == 'khalti':
+            clear_cart()
             return redirect(f'/checkout?order_id={order.id}')
+        else:
+            clear_cart()
 
     # Handle GET request (Show checkout page)
     order_id = request.GET.get('order_id')
@@ -483,9 +505,6 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
-import requests
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def verify_khalti_payment(request):
@@ -506,7 +525,13 @@ def verify_khalti_payment(request):
         "amount": amount
     }
 
-    response = requests.post(settings.KHALTI_VERIFY_URL, data=payload, headers=headers)
+    if not settings.KHALTI_SECRET_KEY or not settings.KHALTI_VERIFY_URL:
+        return JsonResponse({"success": False, "message": "Khalti is not configured (set KHALTI_SECRET_KEY and KHALTI_VERIFY_URL)."}, status=503)
+
+    try:
+        response = requests.post(settings.KHALTI_VERIFY_URL, data=payload, headers=headers, timeout=15)
+    except requests.RequestException as e:
+        return JsonResponse({"success": False, "message": f"Could not reach Khalti: {e}"}, status=502)
 
     if response.status_code == 200:
         # Payment is successful, create Order
@@ -539,8 +564,11 @@ def aboutus(request):
     return render(request,"about.html",{'team_members':team_members})
 
 def shop(request, name):
-    template_name = f'shop/{name}.html' 
-    return render(request, template_name)
+    template_name = f'shop/{name}.html'
+    try:
+        return render(request, template_name)
+    except TemplateDoesNotExist:
+        raise Http404("Shop page not found")
 
 
 def blog_list(request):
@@ -580,6 +608,21 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return str(ip) if ip else '0.0.0.0'  # ✅ Always return string
+
+
+def like_blog(request, blog_id):
+    # Like has unique_together (blog, ip_address): one like per IP, clicking again unlikes
+    blog = get_object_or_404(Blog, id=blog_id)
+    ip = get_client_ip(request)
+    like = Like.objects.filter(blog=blog, ip_address=ip).first()
+    if like:
+        like.delete()
+        liked = False
+    else:
+        Like.objects.create(blog=blog, ip_address=ip,
+                            user=request.user if request.user.is_authenticated else None)
+        liked = True
+    return JsonResponse({'liked': liked, 'total_likes': blog.likes.count()})
 
 
 from django.shortcuts import render, get_object_or_404
@@ -664,8 +707,14 @@ def remove_from_wishlist(request, product_id):
     if request.user.is_authenticated:
         product = get_object_or_404(Product, id=product_id)
         Wishlist.objects.filter(user=request.user, product=product).delete()
+    else:
+        wishlist = request.session.get('wishlist', [])
+        if product_id in wishlist:
+            wishlist.remove(product_id)
+        request.session['wishlist'] = wishlist
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'status': 'removed'})
-    return redirect('wishlist_view')  # Redirect if not authenticated
+    return redirect('wishlist')
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
@@ -822,14 +871,25 @@ def rate_product(request, product_id):
 
         return redirect('home')
 
+
 def subscribe(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        if email:
-            # Here you would typically save the email to your database or mailing list
-            # For demonstration, we'll just print it
+        if email:  
             print(f"Subscribed email: {email}")
-            return redirect('product_list')  # Redirect to a success page or back to product list
+            return JsonResponse({'status': 'success', 'message': 'You have successfully subscribed!'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Email is required.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+# def subscribe(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         if email:
+#             # Here you would typically save the email to your database or mailing list
+#             # For demonstration, we'll just print it
+#             print(f"Subscribed email: {email}")
+#             return redirect('product_list')  # Redirect to a success page or back to product list
+#         else:
+#             return JsonResponse({'status': 'error', 'message': 'Email is required.'})
+#     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

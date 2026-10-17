@@ -37,7 +37,7 @@
 										<input type="text" placeholder="Email here..." name="email" required>
 										<input type="password" placeholder="Password" name="password" required>
 										<p><a href="#" class="text-gray">Forget your password?</a></p>
-										<button type="submit" data-text="login" class="button-one submit-button mt-15" onclick="AlertSystem.success('Login Successful!', 3000)">login</button>
+										<button type="submit" data-text="login" class="button-one submit-button mt-15">login</button>
 									</form>
                     				<p id="login-message" class="mt-2 text-danger"></p>
 
@@ -50,7 +50,7 @@
 									<form id="register-form">
 										{% csrf_token %}
 
-										<input type="text" placeholder="Your name here..." name="username">
+										<input type="text" placeholder="Username (letters, numbers, no spaces)..." name="username">
 										<input type="text" placeholder="Email address here..." name="email">
 										<input type="password" placeholder="Password" name="password" required>
 										<input type="password" placeholder="Confirm password" name="confirm" required	>
@@ -70,7 +70,38 @@
 			<!-- SHOPPING-CART-AREA END -->
 			 
 <!-- SCRIPT TO HANDLE LOGIN & REGISTER -->
-<!-- SCRIPT TO HANDLE LOGIN & REGISTER -->
+<style>
+/* Add fade-in and fade-out animations for messages */
+.message {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.message.visible {
+    opacity: 1;
+}
+
+.message.success {
+    color: green;
+}
+
+.message.error {
+    color: red;
+}
+
+/* Smooth animations for input error messages */
+.input-error {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.input-error.visible {
+    opacity: 1;
+}
+</style>
 <script>
 function getCookie(name) {
 	let cookieValue = null;
@@ -88,82 +119,212 @@ function getCookie(name) {
 }
 const getCSRFToken = () => getCookie('csrftoken');
 
+// Read the JSON body; a crashed server returns an HTML page instead.
+async function readJson(response) {
+    try { return await response.json(); } catch (_) { return {}; }
+}
+
+// Turn DRF errors ({"field": ["msg"]} or {"non_field_errors": [...]}) into one line.
+function errorText(data, fallback) {
+    if (data.error) return data.error;
+    const parts = [];
+    for (const [field, msgs] of Object.entries(data)) {
+        const text = Array.isArray(msgs) ? msgs.join(' ') : String(msgs);
+        parts.push(field === 'non_field_errors' ? text : `${field}: ${text}`);
+    }
+    return parts.length ? parts.join(' ') : fallback;
+}
+
+function setMsg(msg, text, ok) {
+    msg.textContent = text;
+    msg.classList.toggle('text-success', ok);
+    msg.classList.toggle('text-danger', !ok);
+}
+
 document.getElementById('login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
+    if (!validateLoginForm()) return;
 
-    const email = this.email.value;
+    const email = this.email.value.trim();
     const password = this.password.value;
-
-    const response = await fetch('/user/api/login/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        },
-        credentials: 'include',  // VERY IMPORTANT to include cookies
-        body: JSON.stringify({ email, password })
-    });
-
-
-    const data = await response.json();
-
     const msg = document.getElementById('login-message');
 
-   if (response.ok) {
-
-    // Check if token exists before storing
-    if (data.token) {
-        localStorage.setItem('auth_token', data.token);
-    } else {
-		console.error("No token received from server.");
-	}
-
-    msg.textContent = "Login successful!";
-    msg.classList.remove('text-danger');
-    msg.classList.add('text-success');
-
-    window.location.href = '/';
-} else {
-    msg.textContent = data.error || "Login failed.";
-    msg.classList.remove('text-success');
-    msg.classList.add('text-danger');
-}
-    AlertSystem.success("Login successfully!", 3000, "Success");
-});
-document.getElementById('register-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const username = this.username.value;
-    const email = this.email.value;
-    const password = this.password.value;
-    const confirm = this.confirm.value;
-
-    const response = await fetch('/user/api/register/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        },
-        credentials: 'include',
-        body: JSON.stringify({ username, email, password, confirm })  // ✅ fixed line
-    });
-
-    const data = await response.json();
-    const msg = document.getElementById('register-message');
+    let response;
+    try {
+        response = await fetch('/user/api/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            credentials: 'include',  // VERY IMPORTANT to include cookies
+            body: JSON.stringify({ email, password })
+        });
+    } catch (err) {
+        setMsg(msg, "Could not reach the server. Please try again.", false);
+        return;
+    }
+    const data = await readJson(response);
 
     if (response.ok) {
-        localStorage.setItem('auth_token', data.token);
-        msg.textContent = "Registration successful!";
-        msg.classList.remove('text-danger');
-        msg.classList.add('text-success');
-        setTimeout(() => {
-        window.location.reload();  // force full reload so Django shows profile
-    }, 1000);
+        if (data.token) localStorage.setItem('auth_token', data.token);
+        setMsg(msg, "Login successful!", true);
+        window.location.href = '/';
     } else {
-        msg.textContent = data.error || "Registration failed.";
-        msg.classList.remove('text-success');
-        msg.classList.add('text-danger');
+        setMsg(msg, errorText(data, `Login failed (server error ${response.status}).`), false);
     }
 });
+
+document.getElementById('register-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!validateRegisterForm()) return;
+
+    const username = this.username.value.trim();
+    const email = this.email.value.trim();
+    const password = this.password.value;
+    const confirm = this.confirm.value;
+    const msg = document.getElementById('register-message');
+
+    let response;
+    try {
+        response = await fetch('/user/api/register/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            credentials: 'include',
+            body: JSON.stringify({ username, email, password, confirm })
+        });
+    } catch (err) {
+        setMsg(msg, "Could not reach the server. Please try again.", false);
+        return;
+    }
+    const data = await readJson(response);
+
+    if (response.ok) {
+        if (data.token) localStorage.setItem('auth_token', data.token);
+        setMsg(msg, "Registration successful! Logging you in...", true);
+        setTimeout(() => { window.location.href = '/'; }, 1000);
+    } else {
+        setMsg(msg, errorText(data, `Registration failed (server error ${response.status}).`), false);
+    }
+});
+
+// Function to show messages with fade-in and fade-out animations
+function showMessage(elementId, message, type) {
+    const messageElement = document.getElementById(elementId);
+    messageElement.textContent = message;
+    messageElement.className = `message ${type} visible`;
+
+    // Fade out after 3 seconds
+    setTimeout(() => {
+        messageElement.classList.remove('visible');
+    }, 3000);
+}
+
+// Function to show error messages below each input field with animation
+function showInputError(inputElement, message) {
+    let errorElement = inputElement.nextElementSibling;
+
+    // Create error element if it doesn't exist
+    if (!errorElement || !errorElement.classList.contains('input-error')) {
+        errorElement = document.createElement('div');
+        errorElement.className = 'input-error';
+        inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+    }
+
+    errorElement.textContent = message;
+    errorElement.classList.add('visible');
+}
+
+function clearInputError(inputElement) {
+    const errorElement = inputElement.nextElementSibling;
+    if (errorElement && errorElement.classList.contains('input-error')) {
+        errorElement.classList.remove('visible');
+        setTimeout(() => {
+            errorElement.textContent = '';
+        }, 300); // Wait for the fade-out animation to complete
+    }
+}
+
+// Update validation functions to show errors below inputs with animation
+function validateLoginForm() {
+    const email = document.querySelector('#login-form input[name="email"]');
+    const password = document.querySelector('#login-form input[name="password"]');
+
+    let isValid = true;
+
+    if (!email.value) {
+        showInputError(email, 'Email is required.');
+        isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        showInputError(email, 'Enter a valid email address.');
+        isValid = false;
+    } else {
+        clearInputError(email);
+    }
+
+    if (!password.value) {
+        showInputError(password, 'Password is required.');
+        isValid = false;
+    } else {
+        clearInputError(password);
+    }
+
+    return isValid;
+}
+
+function validateRegisterForm() {
+    const username = document.querySelector('#register-form input[name="username"]');
+    const email = document.querySelector('#register-form input[name="email"]');
+    const password = document.querySelector('#register-form input[name="password"]');
+    const confirm = document.querySelector('#register-form input[name="confirm"]');
+
+    let isValid = true;
+
+    if (!username.value) {
+        showInputError(username, 'Username is required.');
+        isValid = false;
+    } else if (username.value.length < 3) {
+        showInputError(username, 'Username must be at least 3 characters long.');
+        isValid = false;
+    } else {
+        clearInputError(username);
+    }
+
+    if (!email.value) {
+        showInputError(email, 'Email is required.');
+        isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        showInputError(email, 'Enter a valid email address.');
+        isValid = false;
+    } else {
+        clearInputError(email);
+    }
+
+    if (!password.value) {
+        showInputError(password, 'Password is required.');
+        isValid = false;
+    } else if (password.value.length < 6) {
+        showInputError(password, 'Password must be at least 6 characters long.');
+        isValid = false;
+    } else {
+        clearInputError(password);
+    }
+
+    if (!confirm.value) {
+        showInputError(confirm, 'Confirm password is required.');
+        isValid = false;
+    } else if (password.value !== confirm.value) {
+        showInputError(confirm, 'Passwords do not match.');
+        isValid = false;
+    } else {
+        clearInputError(confirm);
+    }
+
+    return isValid;
+}
 
 </script>
 {% endblock %}

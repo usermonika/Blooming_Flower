@@ -1528,20 +1528,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.innerHTML = '<i class="zmdi zmdi-refresh zmdi-hc-spin"></i> Adding...';
                 this.disabled = true;
                 
-                // Simulate add to cart (replace with actual endpoint)
-                fetch(`/api/add-to-cart/${productId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                        'Content-Type': 'application/json'
-                    }
+                // GET returns JSON {cart_item_count}; POST would redirect to the cart page
+                fetch(`/add-to-cart/${productId}/`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
+                    if (data.cart_item_count !== undefined) {
                         showNotification('Product added to cart successfully!', 'success');
                         // Update cart count if available
-                        updateCartCount(data.cart_count);
+                        updateCartCount(data.cart_item_count);
                     } else {
                         showNotification('Failed to add product to cart', 'error');
                     }

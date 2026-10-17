@@ -174,61 +174,30 @@
 								</div>
 							</div>
 						</div>
+						
 						<!-- up-comming-product start -->
-						<div class="col-lg-4 col-md-4 d-flex align-items-stretch">
+						<div class="col-lg-4 col-md-4">
 							{% if upcoming_product %}
-							<style>
-.upcoming-card {
-    background: #fff;
-    border-radius: 8px;
-    transition: box-shadow 0.2s;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    /* height: 100%; */
-    padding: 0;
-    margin: 0;
-}
-.upcoming-card:hover {
-    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.18), 0 1.5px 6px rgba(200,161,101,0.10);
-}
-.upcoming-card .discount-info {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 16px 8px 12px 8px;
-}
-.upcoming-card .up-comming-brief {
-    margin-bottom: 8px;
-}
-.upcoming-card .count-down {
-    margin-top: 4px;
-}
-</style>
-<div class="upcoming-card"> <!-- Use same class as discount-product for consistent style -->
-    <a href="#"><img src="{{ upcoming_product.image.url }}" alt="Upcoming Product" style="width:100%;height:250px;object-fit:cover;border-radius:8px 8px 0 0;display:block;"/></a>
-    <div class="discount-info text-center"> 
-        <h3 class="text-dark-red">Upcoming Product</h3>
-        {% comment %} <div class="up-comming-brief"> {% endcomment %}
-            <h4 class="post-title"><a href="#">{{ upcoming_product.product.name }}</a></h4>
-            {# <h4 class="comming-pro-price">Rs {{ upcoming_product.product.price }}</h4> #} <!-- Price hidden -->
-        {% comment %} </div> {% endcomment %}
-            <div class="release-date mb-1 text-muted" style="font-size: 14px;">
-                Release Date: {{ upcoming_product.release_date|date:"F j, Y" }}
-            </div>
-            <div data-countdown="{{ upcoming_product.release_date }}"></div>
-    </div>
-</div>
+							<div class="up-comming-product">
+								<div class="up-comming-img">
+									<a href="#"><img src="{{ upcoming_product.image.url }}" alt="Upcoming Product" style="width:330px;height:200px;object-fit:cover;"/></a>
+								</div>
+								<div class="up-comming-info text-center">
+									<div class="up-comming-brief">
+										<h4 class="post-title"><a href="#">{{ upcoming_product.product.name }}</a></h4>
+										<h4 class="comming-pro-price">Rs {{ upcoming_product.product.price }}</h4>
+									</div>
+									<div class="count-down">
+										<div data-countdown="{{ upcoming_product.release_date }}"></div>
+									</div>
+								</div>
+							</div>
 							{% else %}
 							<p class="text-center">No upcoming products available.</p>
 							{% endif %}
 						</div>
 						<!-- up-comming-product end -->
 
-						
-						
 					</div>
 				</div>
 			</div>
@@ -258,8 +227,8 @@
 							<ul class="tab-menu nav clearfix">
 								<li><a class="active" href="#new-arrivals" data-bs-toggle="tab">New Arrivals</a></li>
 								{% comment %} <li><a href="#best-seller"  data-bs-toggle="tab">Best Seller </a></li>
-								<li><a href="#most-view" data-bs-toggle="tab">Most View </a></li> {% endcomment %}
-								<li><a href="#discounts" data-bs-toggle="tab">Discounts</a></li>
+								<li><a href="#most-view" data-bs-toggle="tab">Most View </a></li>
+								<li><a href="#discounts" data-bs-toggle="tab">Discounts</a></li> {% endcomment %}
 							</ul>
 						</div>	
 						<div class="col-lg-12">
@@ -316,10 +285,12 @@
 																
 									</div>					
 								</div>
-								<div class="tab-pane" id="discounts">
+							</div>
+							<!--discounts-->
+							<div class="tab-pane active" id="discounts">
 									<div class="row">
 										<!-- product_list.html -->
-										{% for product in discount_products %}
+										{% for product in products %}
 										<div class="col-xl-3 col-lg-4 col-md-6">
 											<div class="single-product">
 												<div class="product-img">
@@ -364,7 +335,7 @@
 											</div>
 										</div>
 										{% endfor %}
-									</div>				
+																
 									</div>					
 								</div>
 							</div>

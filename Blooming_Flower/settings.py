@@ -25,13 +25,14 @@ SECRET_KEY = 'django-insecure-+lllkvef+1#9h8e4tfan%drxdk^^c91okl3#u*jolq5ap8c^%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.18.40", "127.0.0.1", "localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    # 'grappelli',
+    'baton',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +49,12 @@ INSTALLED_APPS = [
     'django_extensions',
     
     ]
+
+BATON = {
+    'SITE_HEADER': 'My Admin',
+    'SITE_TITLE': 'My Project',
+    'INDEX_TITLE': 'Welcome to My Project Admin',
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -102,6 +109,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    # 'ENGINE': 'django.db.backends.mysql',
+    # 'NAME': 'blooming',  # Your MySQL database name
+    # 'USER': 'root',
+    # 'PASSWORD': '',
+    # 'HOST': 'localhost',
+    # 'PORT': '3306',
+    # }
 }
 
 # Khalti keys
@@ -110,9 +125,11 @@ KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY')
 KHALTI_VERIFY_URL = os.getenv('KHALTI_VERIFY_URL')
 
 # Stripe keys
-STRIPE_TEST_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
-STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
-
+# STRIPE_TEST_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
+# STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
+# settings.py
+STRIPE_TEST_PUBLIC_KEY = ''
+STRIPE_TEST_SECRET_KEY = ''
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

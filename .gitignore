@@ -1,6 +1,16 @@
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
 # SQLite Database
 db.sqlite3
 db.sqlite3-journal
+
+# Environment variables (keep .env.example)
+.env
+.env.*
+!.env.example
 
 # Virtual Environments
 .venv/
@@ -17,3 +27,27 @@ pyvenv.cfg
 */migrations/*
 !**/migrations
 !**/migrations/__init__.py
+
+# User-uploaded media
+media/
+
+# Collected static files (python manage.py collectstatic)
+staticfiles/
+
+# Logs
+*.log
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

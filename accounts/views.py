@@ -2,7 +2,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 from .serializers import UserRegisterSerializer
 from rest_framework.permissions import AllowAny
@@ -19,8 +19,8 @@ def register_user(request):
     # print(serializer)
     if serializer.is_valid():
         user = serializer.save()
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         token, _ = Token.objects.get_or_create(user=user)
-        print(token)
         return Response({'token': token.key}, status=status.HTTP_201_CREATED)
     else:
         print(serializer.errors)  # 👈 add this line to see actual errors
@@ -39,13 +39,14 @@ def login_user(request):
     if not email or not password:
         return Response({'error': 'Email and password required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        user_obj = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-    # Authenticate using username from user_obj
-    user = authenticate(request, username=user_obj.username, password=password)
+    # Email is not unique on CustomUser, so several accounts may share it;
+    # also accept a username typed into the email box.
+    user = None
+    candidates = User.objects.filter(email__iexact=email) | User.objects.filter(username=email)
+    for user_obj in candidates.distinct():
+        user = authenticate(request, username=user_obj.username, password=password)
+        if user is not None:
+            break
 
     if user is not None:
         login(request, user) 
