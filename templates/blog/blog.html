@@ -72,12 +72,12 @@
         <a href="#"><img src="{{ blog.image.url }}" alt="{{ blog.title }}" style="width:320px;height:200px;object-fit:cover;" /></a>
         <div class="like-share text-center fix">
           {% if blog.id in user_liked_blog_ids %}
-            <a href="#" onclick="likeBlog({{ blog.id }})" id="like-btn-{{ blog.id }}">
+            <a href="#" onclick="likeBlog({{ blog.id }}); return false;" id="like-btn-{{ blog.id }}">
               <i class="zmdi zmdi-favorite liked"></i>
               <span id="like-count-{{ blog.id }}">{{ blog.total_likes }}</span> Like
             </a>
           {% else %}
-            <a href="#" onclick="likeBlog({{ blog.id }})" id="like-btn-{{ blog.id }}">
+            <a href="#" onclick="likeBlog({{ blog.id }}); return false;" id="like-btn-{{ blog.id }}">
               <i class="zmdi zmdi-favorite-outline"></i>
               <span id="like-count-{{ blog.id }}">{{ blog.total_likes }}</span> Like
             </a>
@@ -139,10 +139,6 @@
 				</div>
 			</div>
 			<!-- BLGO-AREA END -->
-			 <a href="#" onclick="likeBlog({{ blog.id }})" id="like-btn-{{ blog.id }}">
-    <i class="zmdi zmdi-favorite-outline"></i>
-    <span id="like-count-{{ blog.id }}">{{ blog.total_likes }}</span> Like
-</a>
 
 <script>
 function likeBlog(blogId) {

@@ -15,6 +15,16 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load KEY=value lines from .env (git-ignored) so secrets never live in the code.
+# Real environment variables win over the file.
+_env_file = BASE_DIR / '.env'
+if _env_file.exists():
+    for _line in _env_file.read_text(encoding='utf-8').splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith('#') and '=' in _line:
+            _key, _value = _line.split('=', 1)
+            os.environ.setdefault(_key.strip(), _value.strip().strip('"').strip("'"))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -25,13 +35,14 @@ SECRET_KEY = 'django-insecure-+lllkvef+1#9h8e4tfan%drxdk^^c91okl3#u*jolq5ap8c^%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.18.40", "127.0.0.1", "localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    # 'grappelli',
+    'baton',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,8 +56,15 @@ INSTALLED_APPS = [
     'Ecommerce',
     'home',
     'accounts',
+    'django_extensions',
     
     ]
+
+BATON = {
+    'SITE_HEADER': 'My Admin',
+    'SITE_TITLE': 'My Project',
+    'INDEX_TITLE': 'Welcome to My Project Admin',
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -101,6 +119,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    # 'ENGINE': 'django.db.backends.mysql',
+    # 'NAME': 'blooming',  # Your MySQL database name
+    # 'USER': 'root',
+    # 'PASSWORD': '',
+    # 'HOST': 'localhost',
+    # 'PORT': '3306',
+    # }
 }
 
 # Khalti keys
@@ -111,7 +137,6 @@ KHALTI_VERIFY_URL = os.getenv('KHALTI_VERIFY_URL')
 # Stripe keys
 STRIPE_TEST_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
 STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

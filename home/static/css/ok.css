@@ -1,0 +1,322 @@
+/* Fix hero slider navigation arrows positioning */
+		.nivo-directionNav a {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			text-align: center !important;
+		}
+		
+		.nivo-directionNav a.nivo-prevNav {
+			padding-left: 6px !important; /* Adjust to center icon in left triangle */
+			padding-right: 2px !important;
+		}
+		
+		.nivo-directionNav a.nivo-nextNav {
+			padding-right: 6px !important; /* Adjust to center icon in right triangle */
+			padding-left: 2px !important;
+		}
+		
+		/* Ensure icons are properly centered vertically and horizontally */
+		.nivo-directionNav a i {
+			display: block !important;
+			line-height: 1 !important;
+			vertical-align: middle !important;
+			font-size: 18px !important;
+			margin: 0 !important;
+		}
+		
+		/* Fine-tune the positioning for better centering */
+		.nivo-directionNav a.nivo-prevNav i {
+			transform: translateX(2px) !important; /* Move icon slightly right in left triangle */
+		}
+		
+		.nivo-directionNav a.nivo-nextNav i {
+			transform: translateX(-2px) !important; /* Move icon slightly left in right triangle */
+		}
+		
+		.product-action {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			padding: 0 !important;
+		}
+		
+		.product-action a {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			float: none !important;
+		}
+		
+		/* Make product cards clickable */
+		.single-product {
+			cursor: pointer !important;
+			transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+		}
+		
+		.single-product:hover {
+			transform: translateY(-2px) !important;
+			box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15) !important;
+		}
+		
+		/* Ensure action buttons remain clickable */
+		.product-action a, 
+		.cart-plus-minus,
+		.wishlist-toggle,
+		[data-add-to-cart] {
+			cursor: pointer !important;
+			position: relative !important;
+			z-index: 10 !important;
+		}
+		
+		/* Custom Modal Styling to match theme color palette */
+		.modal-content {
+			border: none !important;
+			border-radius: 8px !important;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+		}
+		
+		.modal-header {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			color: white !important;
+			border-bottom: none !important;
+			border-radius: 8px 8px 0 0 !important;
+			padding: 20px 25px !important;
+		}
+		
+		.modal-header .modal-title {
+			font-weight: 600 !important;
+			font-size: 1.4rem !important;
+		}
+		
+		.modal-header .btn-close {
+			background: none !important;
+			border: none !important;
+			font-size: 24px !important;
+			color: white !important;
+			opacity: 0.8 !important;
+		}
+		
+		.modal-header .btn-close:hover {
+			opacity: 1 !important;
+		}
+		
+		.modal-body {
+			padding: 30px 25px !important;
+			background-color: #fafafa !important;
+		}
+		
+		.product-info h2 {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 15px !important;
+		}
+		
+		.price-box-3 .new-price {
+			color: #c8a165 !important;
+			font-weight: 700 !important;
+			font-size: 1.5rem !important;
+		}
+		
+		.price-box-3 .old-price {
+			color: #95a5a6 !important;
+		}
+		
+		.quick-add-to-cart {
+			background: #f8f9fa !important;
+			border-radius: 8px !important;
+			padding: 20px !important;
+			margin-bottom: 20px !important;
+			border: 1px solid #e9ecef !important;
+		}
+		
+		.quick-add-to-cart .input-group {
+			max-width: 100% !important;
+			display: flex !important;
+			align-items: stretch !important;
+		}
+		
+		.quick-add-to-cart .btn-primary {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			border: none !important;
+			border-radius: 0 5px 5px 0 !important;
+			padding: 12px 25px !important;
+			font-weight: 600 !important;
+			transition: all 0.3s ease !important;
+			flex: 0 0 auto !important;
+			min-width: 140px !important;
+		}
+		
+		.quick-add-to-cart .btn-primary:hover {
+			background: linear-gradient(135deg, #b8956b, #c8a165) !important;
+			transform: translateY(-1px) !important;
+			box-shadow: 0 4px 12px rgba(200, 161, 101, 0.4) !important;
+		}
+		
+		.quick-add-to-cart .form-control {
+			border: 2px solid #e9ecef !important;
+			border-radius: 5px 0 0 5px !important;
+			padding: 12px 15px !important;
+			font-size: 16px !important;
+			font-weight: 600 !important;
+			text-align: center !important;
+			width: 80px !important;
+			flex: 0 0 80px !important;
+		}
+		
+		.quick-add-to-cart .form-control:focus {
+			border-color: #c8a165 !important;
+			box-shadow: 0 0 0 0.2rem rgba(200, 161, 101, 0.25) !important;
+			outline: none !important;
+		}
+		
+		.quantity-label {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 10px !important;
+			display: block !important;
+		}
+		
+		.quick-desc h6, .order-detail-section h6, .social-sharing h6 {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 10px !important;
+		}
+		
+		.order-detail-section ul li {
+			color: #7f8c8d !important;
+			margin-bottom: 8px !important;
+		}
+		
+		.order-detail-section ul li i {
+			color: #c8a165 !important;
+			margin-right: 8px !important;
+		}
+		
+		.social-sharing ul li a {
+			color: #7f8c8d !important;
+			font-size: 20px !important;
+			margin-right: 10px !important;
+			transition: color 0.3s ease !important;
+		}
+		
+		.social-sharing ul li a:hover {
+			color: #c8a165 !important;
+		}
+		
+		.review-section h5 {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+			margin-bottom: 15px !important;
+		}
+		
+		.star-rating .star {
+			color: #ddd !important;
+			font-size: 28px !important;
+			cursor: pointer !important;
+			transition: color 0.2s ease !important;
+		}
+		
+		.star-rating .star:hover,
+		.star-rating .star.zmdi-star {
+			color: #c8a165 !important;
+		}
+		
+		.review-section .form-control {
+			border: 2px solid #e9ecef !important;
+			border-radius: 5px !important;
+			padding: 12px !important;
+		}
+		
+		.review-section .form-control:focus {
+			border-color: #c8a165 !important;
+			box-shadow: 0 0 0 0.2rem rgba(200, 161, 101, 0.25) !important;
+		}
+		
+		.review-section .btn-primary {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			border: none !important;
+			border-radius: 5px !important;
+			padding: 12px 25px !important;
+			font-weight: 600 !important;
+			transition: all 0.3s ease !important;
+		}
+		
+		.review-section .btn-primary:hover {
+			background: linear-gradient(135deg, #b8956b, #c8a165) !important;
+			transform: translateY(-2px) !important;
+			box-shadow: 0 5px 15px rgba(200, 161, 101, 0.4) !important;
+		}
+		
+		.alert-warning {
+			background-color: #fff8e1 !important;
+			border-color: #f5e6a3 !important;
+			color: #8a6914 !important;
+			border-radius: 5px !important;
+		}
+		
+		.alert-warning a {
+			color: #c8a165 !important;
+			font-weight: 600 !important;
+		}
+		
+		/* Modal backdrop */
+		.modal-backdrop {
+			background-color: rgba(0, 0, 0, 0.6) !important;
+		}
+				/* Profile dropdown styling - Header user name area only */
+		.dropdown .btn-outline-primary {
+			border-color: #c8a165 !important;
+			color: #c8a165 !important;
+			background: transparent !important;
+			font-weight: 600 !important;
+			padding: 8px 16px !important;
+			border-radius: 5px !important;
+			transition: all 0.3s ease !important;
+		}
+		
+		.dropdown .btn-outline-primary:hover,
+		.dropdown .btn-outline-primary:focus,
+		.dropdown .btn-outline-primary.show {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			border-color: #c8a165 !important;
+			color: white !important;
+			box-shadow: 0 4px 12px rgba(200, 161, 101, 0.3) !important;
+		}
+		
+		/* Dropdown menu styling - Header dropdown menu only */
+		.dropdown-menu {
+			border: 1px solid #c8a165 !important;
+			border-radius: 8px !important;
+			box-shadow: 0 8px 25px rgba(200, 161, 101, 0.15) !important;
+			background: white !important;
+			padding: 8px 0 !important;
+		}
+		
+		.dropdown-item {
+			color: #2c3e50 !important;
+			padding: 10px 20px !important;
+			font-weight: 500 !important;
+			transition: all 0.3s ease !important;
+		}
+		
+		.dropdown-item:hover,
+		.dropdown-item:focus {
+			background: linear-gradient(135deg, #c8a165, #b8956b) !important;
+			color: white !important;
+		}
+		
+		/* Responsive adjustments */
+		@media (max-width: 768px) {
+			.modal-dialog {
+				margin: 10px !important;
+			}
+			
+			.modal-body {
+				padding: 20px 15px !important;
+			}
+			
+			.modal-header {
+				padding: 15px 20px !important;
+			}
+		}
